@@ -1,44 +1,76 @@
 # Fontes do scraper (Fase 2, tarefa 2.1).
-# Cada fonte só passa a "ativa: true" depois de:
-#   1. confirmar o URL da página de agenda;
-#   2. correr: python -m scripts.verificar_fonte <url>   (robots.txt e tamanho do texto);
-#   3. ler os termos de utilização do site.
-# "seletor" (opcional) é um seletor CSS da zona da agenda, para mandar menos texto ao Claude.
+# Escolhidas a partir dos 129 eventos que a tarefa agendada "Eventos Coimbra
+# diários" encontrou (out. 2026). O scraper verifica o robots.txt antes de cada visita.
+# Antes de ativar uma fonte, lê os termos de utilização do site.
+# "seletor" (opcional) = seletor CSS da zona da agenda, para mandar menos texto ao Claude.
 
 cidade: Coimbra
 
 fontes:
-  - id: convento
-    nome: Convento São Francisco
-    url: ""            # preencher na tarefa 2.1
+  # Agenda conjunta da Câmara e da Universidade: a fonte com mais eventos (~50%).
+  # Só a página inicial serve: as páginas /explore carregam os eventos por JavaScript.
+  - id: agenda-coimbra
+    nome: Agenda Coimbra (Câmara e Universidade)
+    url: https://agenda.coimbra.pt/
     categoria: outro
     seletor: ""
-    ativa: false
+    ativa: true
+
+  - id: convento
+    nome: Convento São Francisco
+    url: https://www.coimbraconvento.pt/pt/agenda/
+    categoria: outro
+    seletor: ""
+    ativa: true
 
   - id: tagv
     nome: Teatro Académico de Gil Vicente
-    url: ""
+    url: https://tagv.pt/agenda/
+    categoria: teatro
+    seletor: ""
+    ativa: true
+
+  - id: jazz-ao-centro
+    nome: Jazz ao Centro Clube / Salão Brazil
+    url: https://www.jazzaocentroclube.pt/agenda
+    categoria: musica
+    seletor: ""
+    ativa: true
+
+  - id: teatrao
+    nome: O Teatrão
+    url: http://oteatrao.com/programacao/
+    categoria: teatro
+    seletor: ""
+    ativa: true
+
+  # Ativar depois de as cinco primeiras estarem estáveis.
+  - id: fbb
+    nome: Fundação Bissaya Barreto (Casa das Artes)
+    url: https://agenda.fbb.pt/eventos/
+    categoria: exposicao
+    seletor: ""
+    ativa: false
+
+  - id: capc
+    nome: Círculo de Artes Plásticas de Coimbra
+    url: https://capcoimbra.org/
+    categoria: exposicao
+    seletor: ""
+    ativa: false
+
+  - id: marionet
+    nome: Marionet
+    url: https://marioneteatro.com/activities
     categoria: teatro
     seletor: ""
     ativa: false
 
-  - id: camara
-    nome: Câmara Municipal de Coimbra — agenda
-    url: ""
+  # Agregador: só mostra 1 a 2 dias e repete eventos das fontes acima.
+  # Usar só se faltar alguma sala; confirmar primeiro os termos do site.
+  - id: viral-agenda
+    nome: Viral Agenda (Coimbra)
+    url: https://www.viralagenda.com/pt/coimbra/coimbra
     categoria: outro
-    seletor: ""
-    ativa: false
-
-  - id: uc
-    nome: Universidade de Coimbra — agenda
-    url: ""
-    categoria: academico
-    seletor: ""
-    ativa: false
-
-  - id: salao-brazil
-    nome: Salão Brazil
-    url: ""
-    categoria: musica
     seletor: ""
     ativa: false
