@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Builds do Flet
+build/
+dist/
+
+# Segredos: NUNCA vão para o repositório
+src/conf/secrets.json
+.env
+
+# Editor / sistema
+.vscode/settings.json
+.DS_Store

@@ -1,0 +1,16 @@
+[
+  {"titulo": "Concerto de Inverno", "inicio": "{hoje+3}T21:30:00", "fim": null,
+   "local": "Sala Exemplo", "categoria": "musica", "preco": "10 €",
+   "descricao": "Concerto de música de câmara com o quarteto residente.",
+   "url": "https://example.org/agenda/concerto-de-inverno",
+   "imagem": "https://example.org/img/concerto.jpg"},
+  {"titulo": "Oficina para Famílias", "inicio": "{hoje+4}T11:00:00", "fim": "{hoje+4}T13:00:00",
+   "local": "Sala Exemplo", "categoria": "familia", "preco": "Gratuito",
+   "descricao": null, "url": "/agenda/oficina-familias", "imagem": null},
+  {"titulo": "Exposição de Fotografia", "inicio": "{hoje+0}T10:00:00", "fim": "{hoje+14}T18:00:00",
+   "local": "Galeria Exemplo", "categoria": "exposição", "preco": null,
+   "descricao": null, "url": "https://outro-site.pt/exposicao", "imagem": null},
+  {"titulo": "Evento antigo", "inicio": "2020-01-01T21:00:00", "fim": null,
+   "local": "Sala Exemplo", "categoria": "musica", "preco": null,
+   "descricao": null, "url": "https://example.org/agenda/antigo", "imagem": null}
+]

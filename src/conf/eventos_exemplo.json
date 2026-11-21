@@ -1,0 +1,18 @@
+[
+  {"id": -1, "titulo": "Concerto de Exemplo", "dias": 0, "hora": "21:30", "duracao_min": 120,
+   "local": "Sala Exemplo", "categoria": "musica", "preco": "10 €",
+   "descricao": "Evento fictício, mostrado quando não há ligação à internet.",
+   "url": "https://example.org/evento/1"},
+  {"id": -2, "titulo": "Peça de Teatro de Exemplo", "dias": 1, "hora": "21:00", "duracao_min": 90,
+   "local": "Sala Exemplo", "categoria": "teatro", "preco": "8 €",
+   "descricao": "Evento fictício, mostrado quando não há ligação à internet.",
+   "url": "https://example.org/evento/2"},
+  {"id": -3, "titulo": "Exposição de Exemplo", "dias": 2, "hora": "10:00", "duracao_min": 480,
+   "local": "Praça Exemplo", "categoria": "exposicao", "preco": "Gratuito",
+   "descricao": "Evento fictício, mostrado quando não há ligação à internet.",
+   "url": "https://example.org/evento/3"},
+  {"id": -4, "titulo": "Oficina para Famílias", "dias": 5, "hora": "11:00", "duracao_min": 120,
+   "local": "Praça Exemplo", "categoria": "familia", "preco": "3 €",
+   "descricao": "Evento fictício, mostrado quando não há ligação à internet.",
+   "url": "https://example.org/evento/4"}
+]

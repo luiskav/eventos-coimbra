@@ -1,0 +1,8 @@
+cidade: Coimbra
+fontes:
+  - id: exemplo
+    nome: Sala Exemplo
+    url: ""
+    categoria: outro
+    seletor: "#agenda"
+    ativa: false

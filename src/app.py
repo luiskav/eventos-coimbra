@@ -1,0 +1,139 @@
+"""Classe App: estado da aplicação e navegação entre ecrãs (Fase 3, tarefa 3.5).
+
+- page.views[0] é a vista principal, com a barra de navegação em baixo
+  (Agenda / Favoritos / Sobre).
+- O detalhe de um evento é uma segunda vista por cima; o botão Voltar do
+  Android (ou a seta da barra) fecha-a através de page.on_view_pop.
+"""
+
+from datetime import datetime
+
+import flet as ft
+
+import agenda
+from config import Config, carregar_config
+from data import FonteDados
+from favoritos import Favoritos
+from theme import construir_tema
+from views import ecra_evento, ecra_favoritos, ecra_sobre
+from views.ecra_agenda import EcraAgenda
+
+SEPARADORES = ["agenda", "favoritos", "sobre"]
+
+
+class App:
+    def __init__(self, page: ft.Page, config: Config | None = None,
+                 dados: FonteDados | None = None, armazenamento=None):
+        self.page = page
+        self.config = config or carregar_config()
+        self.dados = dados or FonteDados(self.config)
+        # FASE 4: favoritos (antes disso, não há coração nos cartões)
+        self.favoritos = Favoritos(armazenamento if armazenamento is not None
+                                   else ft.SharedPreferences())
+        self.eventos = []
+        self.separador = 0
+        self.evento_aberto = None
+        self.ecra_agenda: EcraAgenda | None = None
+
+    # ------------------------------------------------------------------
+    async def iniciar(self):
+        self.page.title = self.config.nome
+        self.page.theme = construir_tema(self.config)  # FASE 5
+        self.page.on_view_pop = self._ao_voltar
+        await self.favoritos.carregar()  # FASE 4
+        self.eventos = self.dados.carregar()
+        self.ecra_agenda = EcraAgenda(self)
+        self.mostrar()
+
+    def agora(self) -> datetime:
+        return agenda.agora_local()
+
+    # ------------------------------------------------------------------
+    # Navegação
+    # ------------------------------------------------------------------
+    def vista_principal(self) -> ft.View:
+        nome = SEPARADORES[self.separador]
+        if nome == "agenda":
+            conteudo = self.ecra_agenda.controlo
+        elif nome == "favoritos":
+            conteudo = ecra_favoritos.construir(self)
+        else:
+            conteudo = ecra_sobre.construir(self)
+
+        return ft.View(
+            route="/",
+            appbar=ft.AppBar(title=ft.Text(self.config.nome)),
+            controls=[conteudo],
+            navigation_bar=ft.NavigationBar(
+                selected_index=self.separador,
+                on_change=self._ao_mudar_separador,
+                destinations=[
+                    ft.NavigationBarDestination(icon=ft.Icons.CALENDAR_MONTH, label="Agenda"),
+                    ft.NavigationBarDestination(icon=ft.Icons.FAVORITE_BORDER,
+                                                selected_icon=ft.Icons.FAVORITE,
+                                                label="Favoritos"),
+                    ft.NavigationBarDestination(icon=ft.Icons.INFO_OUTLINE, label="Sobre"),
+                ],
+            ),
+            padding=0,
+        )
+
+    def construir_vistas(self) -> list[ft.View]:
+        vistas = [self.vista_principal()]
+        if self.evento_aberto is not None:
+            vistas.append(ecra_evento.construir(self, self.evento_aberto))
+        return vistas
+
+    def mostrar(self):
+        self.page.views.clear()
+        self.page.views.extend(self.construir_vistas())
+        self.page.update()
+
+    def redesenhar(self):
+        self.page.update()
+
+    def _ao_mudar_separador(self, e):
+        self.separador = int(e.control.selected_index)
+        self.mostrar()
+
+    def abrir_evento(self, evento):
+        self.evento_aberto = evento
+        self.mostrar()
+
+    def fechar_evento(self):
+        self.evento_aberto = None
+        self.mostrar()
+
+    def _ao_voltar(self, e):
+        self.fechar_evento()
+
+    def recarregar(self):
+        self.eventos = self.dados.carregar()
+        self.ecra_agenda.atualizar()
+        self.mostrar()
+
+    # ------------------------------------------------------------------
+    # FASE 4: ações assíncronas (favoritos e partilha)
+    # ------------------------------------------------------------------
+    def _agendar(self, funcao, *args):
+        self.page.run_task(funcao, *args)
+
+    def pedir_alternar_favorito(self, evento):
+        self._agendar(self.alternar_favorito, evento)
+
+    async def alternar_favorito(self, evento):
+        await self.favoritos.alternar(evento.id)
+        self.ecra_agenda.atualizar()
+        self.mostrar()
+
+    def pedir_partilha(self, evento):
+        self._agendar(self.partilhar, evento)
+
+    async def partilhar(self, evento):
+        texto = agenda.texto_partilha(evento, self.config.nome)
+        try:
+            await ft.Share().share_text(texto, subject=evento.titulo)
+        except Exception:
+            # Sem partilha nativa (alguns browsers): copia para a área de transferência
+            await ft.Clipboard().set(texto)
+            self.page.show_dialog(ft.SnackBar(ft.Text("Texto copiado. Já podes colar.")))

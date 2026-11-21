@@ -1,0 +1,48 @@
+# Publica o site em cada merge no main (Fase 6, tarefa 6.4)
+name: Publicar site
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt flet-cli==1.1.2
+      - name: Gerar secrets.json (só a chave pública)
+        run: python scripts/gerar_secrets.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      - name: Gerar o site
+        run: >
+          flet publish src/main.py
+          --assets src/assets
+          --distpath "${{ github.workspace }}/dist"
+          --app-name "Eventos Coimbra"
+          --app-short-name "Eventos"
+          --app-description "Agenda de eventos de Coimbra"
+          --pwa-theme-color "#8E1B3A"
+          --pwa-background-color "#FFFFFF"
+      # Atenção: um --distpath relativo fica dentro de src/. Por isso usa-se o caminho completo.
+      # Com domínio próprio não é preciso --base-url. Sem domínio, acrescentar:
+      #   --base-url eventos-coimbra
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deploy
+        uses: actions/deploy-pages@v4

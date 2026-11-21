@@ -1,0 +1,20 @@
+# Testes em cada Pull Request (Fase P, tarefa P5)
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [dev]
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r scraper/requirements.txt pytest ruff
+      - run: ruff check .
+      - run: pytest -q
+      # o scraper completo, sem rede e sem chave (resposta do Claude guardada)
+      - run: python -m scraper.run --fonte exemplo --ensaio --offline --fontes tests/fixtures/fontes_teste.yaml

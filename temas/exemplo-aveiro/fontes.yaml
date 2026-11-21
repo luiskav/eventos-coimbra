@@ -1,0 +1,10 @@
+# Tema de teste: fontes fictícias (nenhuma ativa)
+cidade: Aveiro
+
+fontes:
+  - id: exemplo-aveiro
+    nome: Sala Fictícia de Aveiro
+    url: ""
+    categoria: outro
+    seletor: ""
+    ativa: false

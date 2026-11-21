@@ -1,0 +1,28 @@
+{
+  "nome": "Eventos Aveiro (tema de teste)",
+  "cidade": "Aveiro",
+  "slogan": "Tema fictício para testar a reutilização",
+  "dias_agenda": 30,
+  "categorias": {
+    "musica": "Música",
+    "teatro": "Teatro",
+    "exposicao": "Exposições",
+    "desporto": "Desporto",
+    "familia": "Família",
+    "feira": "Feiras",
+    "outro": "Outros"
+  },
+  "cor_primaria": "#0D47A1",
+  "cores_categorias": {
+    "musica": "#7B1FA2",
+    "teatro": "#C62828",
+    "exposicao": "#00838F",
+    "desporto": "#2E7D32",
+    "familia": "#EF6C00",
+    "feira": "#6D4C41",
+    "outro": "#546E7A"
+  },
+  "logotipo": "logo.png",
+  "contacto": "",
+  "texto_sobre": "Tema de teste: prova que a app muda de cidade só com configuração."
+}

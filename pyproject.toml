@@ -1,0 +1,38 @@
+[project]
+name = "eventos-coimbra"
+version = "0.1.0"
+description = "Agenda de eventos e acontecimentos de Coimbra"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flet==1.1.2",
+    "certifi",
+]
+
+# FASE 7: dados da app Android (nome, identificador, ícone)
+[tool.flet]
+org = "pt.aminhaempresa"          # TROCAR pelo domínio da empresa, ao contrário
+product = "Eventos Coimbra"
+company = "A Minha Empresa"       # TROCAR
+copyright = "Copyright (C) 2026 A Minha Empresa"
+
+[tool.flet.app]
+path = "src"
+
+[tool.flet.android]
+# o identificador final fica org + nome do projeto: pt.aminhaempresa.eventos_coimbra
+
+[tool.flet.android.permission]
+"android.permission.INTERNET" = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]

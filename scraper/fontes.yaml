@@ -1,0 +1,44 @@
+# Fontes do scraper (Fase 2, tarefa 2.1).
+# Cada fonte só passa a "ativa: true" depois de:
+#   1. confirmar o URL da página de agenda;
+#   2. correr: python -m scripts.verificar_fonte <url>   (robots.txt e tamanho do texto);
+#   3. ler os termos de utilização do site.
+# "seletor" (opcional) é um seletor CSS da zona da agenda, para mandar menos texto ao Claude.
+
+cidade: Coimbra
+
+fontes:
+  - id: convento
+    nome: Convento São Francisco
+    url: ""            # preencher na tarefa 2.1
+    categoria: outro
+    seletor: ""
+    ativa: false
+
+  - id: tagv
+    nome: Teatro Académico de Gil Vicente
+    url: ""
+    categoria: teatro
+    seletor: ""
+    ativa: false
+
+  - id: camara
+    nome: Câmara Municipal de Coimbra — agenda
+    url: ""
+    categoria: outro
+    seletor: ""
+    ativa: false
+
+  - id: uc
+    nome: Universidade de Coimbra — agenda
+    url: ""
+    categoria: academico
+    seletor: ""
+    ativa: false
+
+  - id: salao-brazil
+    nome: Salão Brazil
+    url: ""
+    categoria: musica
+    seletor: ""
+    ativa: false

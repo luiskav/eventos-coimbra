@@ -1,0 +1,30 @@
+{
+  "nome": "Eventos Coimbra",
+  "cidade": "Coimbra",
+  "slogan": "O que se passa na cidade, hoje e nos próximos dias",
+  "dias_agenda": 30,
+  "categorias": {
+    "musica": "Música",
+    "teatro": "Teatro",
+    "exposicao": "Exposições",
+    "desporto": "Desporto",
+    "academico": "Académico",
+    "familia": "Família",
+    "feira": "Feiras",
+    "outro": "Outros"
+  },
+  "cor_primaria": "#8E1B3A",
+  "cores_categorias": {
+    "musica": "#7B1FA2",
+    "teatro": "#C62828",
+    "exposicao": "#00838F",
+    "desporto": "#2E7D32",
+    "academico": "#1A237E",
+    "familia": "#EF6C00",
+    "feira": "#6D4C41",
+    "outro": "#546E7A"
+  },
+  "logotipo": "logo.png",
+  "contacto": "geral@aminhaempresa.pt",
+  "texto_sobre": "Agenda recolhida automaticamente dos sites das salas e entidades da cidade. Confirma sempre a informação na fonte antes de saíres de casa."
+}
