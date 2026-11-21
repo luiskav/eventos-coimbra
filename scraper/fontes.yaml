@@ -42,7 +42,7 @@ fontes:
     url: http://oteatrao.com/programacao/
     categoria: teatro
     seletor: ""
-    ativa: true
+    ativa: false
 
   # Ativar depois de as cinco primeiras estarem estáveis.
   - id: fbb
