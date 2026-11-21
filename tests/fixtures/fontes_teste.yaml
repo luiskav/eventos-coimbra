@@ -6,3 +6,10 @@ fontes:
     categoria: outro
     seletor: "#agenda"
     ativa: false
+
+  - id: manual
+    nome: Introdução manual (Google Sheet)
+    tipo: folha
+    url: ""
+    link_padrao: https://example.org/agenda/
+    ativa: false
