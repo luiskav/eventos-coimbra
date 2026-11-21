@@ -11,10 +11,10 @@ dependencies = [
 
 # FASE 7: dados da app Android (nome, identificador, ícone)
 [tool.flet]
-org = "pt.aminhaempresa"          # TROCAR pelo domínio da empresa, ao contrário
+org = "pt.luiskav"          # TROCAR pelo domínio da empresa, ao contrário
 product = "Eventos Coimbra"
-company = "A Minha Empresa"       # TROCAR
-copyright = "Copyright (C) 2026 A Minha Empresa"
+company = "luiskav"       # TROCAR
+copyright = "Copyright (C) 2026 luiskav"
 
 [tool.flet.app]
 path = "src"
