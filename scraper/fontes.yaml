@@ -74,3 +74,15 @@ fontes:
     categoria: outro
     seletor: ""
     ativa: false
+
+  # Introdução manual: uma Google Sheet onde se escrevem eventos à mão.
+  # Sem Claude e sem custo. Ver docs/MANUAL.md.
+  # A folha tem de estar partilhada como "Qualquer pessoa com o link: Leitor".
+  # "link_padrao" é usado quando a linha não tem Link.
+  - id: manual
+    nome: Introdução manual
+    tipo: folha
+    url: https://docs.google.com/spreadsheets/d/19jRPJjfjkHduoVCPQP4XPBnvuv-S3db8GUsUM8Q_Dto/edit#gid=0
+    link_padrao: https://luiskav.github.io/eventos-coimbra/
+    categoria: outro
+    ativa: true

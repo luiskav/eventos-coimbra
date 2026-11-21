@@ -6,6 +6,8 @@ Uso:
   python -m scraper.run --fonte tagv --ensaio    # NÃO grava; usa tests/fixtures/tagv.html
   python -m scraper.run --fonte exemplo --ensaio --offline
         # nem sequer chama o Claude: usa a resposta guardada em tests/fixtures/exemplo.json
+  python -m scraper.run --fonte manual --ensaio
+        # fonte do tipo "folha" (Google Sheet): lê tests/fixtures/manual.csv, sem Claude
 """
 
 import argparse
@@ -19,7 +21,7 @@ from pathlib import Path
 
 import yaml
 
-from scraper import extract, fetch
+from scraper import extract, fetch, folha
 from scraper.models import validar_eventos
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -46,13 +48,14 @@ class ClaudeFalso:
         self.hoje = hoje or datetime.now(UTC).date()
 
     def extrair(self, **_):
-        texto = self.caminho.read_text(encoding="utf-8")
-        texto = re.sub(
-            r"\{hoje\+(\d+)\}",
-            lambda m: (self.hoje + timedelta(days=int(m.group(1)))).isoformat(),
-            texto,
-        )
+        texto = datas_relativas(self.caminho.read_text(encoding="utf-8"), self.hoje)
         return extract.Resultado(eventos=json.loads(texto))
+
+
+def datas_relativas(texto: str, hoje: date) -> str:
+    """Nos ficheiros de teste, "{hoje+3}" passa a ser a data de daqui a 3 dias."""
+    return re.sub(r"\{hoje\+(\d+)\}",
+                  lambda m: (hoje + timedelta(days=int(m.group(1)))).isoformat(), texto)
 
 
 def processar_fonte(fonte: dict, cidade: str, ensaio: bool, offline: bool,
@@ -61,6 +64,13 @@ def processar_fonte(fonte: dict, cidade: str, ensaio: bool, offline: bool,
     registo = {"inicio": agora.isoformat(), "estado": "ok", "encontrados": 0, "validos": 0,
                "novos": 0, "tokens_entrada": 0, "tokens_saida": 0, "erro": None}
     base_url = fonte.get("url") or ""
+
+    # Fonte manual (Google Sheet): sem Claude, as linhas já vêm organizadas
+    if fonte.get("tipo") == "folha":
+        resultado = ler_fonte_folha(fonte, ensaio, cliente_http, agora.date())
+        base_url = fonte.get("link_padrao") or ""
+        registo["encontrados"] = len(resultado.eventos)
+        return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem)
 
     # 1. obter o HTML
     guardado = FIXTURES / f"{fonte['id']}.html"
@@ -84,7 +94,41 @@ def processar_fonte(fonte: dict, cidade: str, ensaio: bool, offline: bool,
     registo["encontrados"] = len(resultado.eventos)
     registo["tokens_entrada"] = resultado.tokens_entrada
     registo["tokens_saida"] = resultado.tokens_saida
+    return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem)
 
+
+def ler_fonte_folha(fonte: dict, ensaio: bool, cliente_http,
+                    hoje: date | None = None) -> extract.Resultado:
+    """Lê a Google Sheet em CSV. Em ensaio usa tests/fixtures/<id>.csv, se existir.
+
+    Não consulta o robots.txt: a folha é nossa e é lida pelo link de exportação.
+    """
+    guardado = FIXTURES / f"{fonte['id']}.csv"
+    if ensaio and guardado.exists():
+        texto = datas_relativas(guardado.read_text(encoding="utf-8"),
+                                hoje or datetime.now(UTC).date())
+    else:
+        if not fonte.get("url"):
+            raise fetch.ErroRecolha("Fonte sem URL")
+        try:
+            resposta = cliente_http.get(folha.url_csv(fonte["url"]))
+            resposta.raise_for_status()
+        except Exception as erro:
+            raise fetch.ErroRecolha(
+                f"Não consegui ler a folha ({erro}). Está partilhada como "
+                "'Qualquer pessoa com o link: Leitor'?") from erro
+        if "text/html" in resposta.headers.get("content-type", ""):
+            raise fetch.ErroRecolha("A folha pediu login: partilha-a como "
+                                    "'Qualquer pessoa com o link: Leitor'")
+        texto = resposta.text
+    eventos, ignoradas = folha.ler_folha(texto, fonte.get("link_padrao") or "")
+    for motivo in ignoradas:
+        print(f"  ignorada — {motivo}")
+    return extract.Resultado(eventos=eventos)
+
+
+def _validar_e_gravar(resultado, registo: dict, base_url: str, agora: datetime, ensaio: bool,
+                      fonte: dict, armazem) -> dict:
     # 4. validar
     validos, rejeitados = validar_eventos(resultado.eventos, base_url, agora)
     registo["validos"] = len(validos)
