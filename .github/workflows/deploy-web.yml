@@ -42,7 +42,7 @@ jobs:
       # Atenção: um --distpath relativo fica dentro de src/. Por isso usa-se o caminho completo.
       # Com domínio próprio não é preciso --base-url. Sem domínio, acrescentar:
       #   --base-url eventos-coimbra
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
       - id: deploy
