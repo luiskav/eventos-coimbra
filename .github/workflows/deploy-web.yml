@@ -38,6 +38,7 @@ jobs:
           --app-description "Agenda de eventos de Coimbra"
           --pwa-theme-color "#8E1B3A"
           --pwa-background-color "#FFFFFF"
+          --base-url eventos-coimbra          
       # Atenção: um --distpath relativo fica dentro de src/. Por isso usa-se o caminho completo.
       # Com domínio próprio não é preciso --base-url. Sem domínio, acrescentar:
       #   --base-url eventos-coimbra
