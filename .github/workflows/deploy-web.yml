@@ -36,6 +36,8 @@ jobs:
           --pwa-theme-color "#0A0A0A"
           --pwa-background-color "#0A0A0A"
           --base-url eventos-coimbra
+      - name: Ecrã de carregamento animado (bloco G)
+        run: python scripts/splash.py dist/index.html
       - name: Confirmar que o site foi gerado
         run: ls -la dist && test -f dist/index.html
       - uses: actions/upload-pages-artifact@v4
