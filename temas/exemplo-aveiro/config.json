@@ -35,5 +35,10 @@
   "fonte_texto": "Inter",
   "fonte_destaque": "InterSemi",
   "fonte_titulos": "InterDisplay",
-  "cor_destaque": "#5FA8F5"
+  "cor_destaque": "#5FA8F5",
+  "versao": "0.9.0 beta",
+  "url_site": "",
+  "frases_sobre": [
+    "Tudo o que acontece em Aveiro, num só sítio."
+  ]
 }

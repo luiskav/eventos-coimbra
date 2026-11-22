@@ -1,7 +1,7 @@
 {
   "nome": "Eventos Coimbra",
   "cidade": "Coimbra",
-  "slogan": "O que se passa na cidade, hoje e nos próximos dias",
+  "slogan": "Tudo o que acontece em Coimbra, num só sítio.",
   "dias_agenda": 30,
   "categorias": {
     "musica": "Música",
@@ -28,7 +28,7 @@
   },
   "logotipo": "logo.png",
   "contacto": "geral@aminhaempresa.pt",
-  "texto_sobre": "Agenda recolhida automaticamente dos sites das salas e entidades da cidade. Confirma sempre a informação na fonte antes de saíres de casa.",
+  "texto_sobre": "Concertos, teatro, cinema, exposições e feiras de toda a cidade, juntos numa agenda que se atualiza sozinha todas as manhãs. Escolhe, guarda nos favoritos e partilha com quem vai contigo.",
   "cor_fundo": "#0A0A0A",
   "cor_superficie": "#161618",
   "cor_superficie_2": "#1F1F22",
@@ -37,5 +37,14 @@
   "cor_destaque": "#C9A55C",
   "fonte_texto": "Inter",
   "fonte_destaque": "InterSemi",
-  "fonte_titulos": "InterDisplay"
+  "fonte_titulos": "InterDisplay",
+  "versao": "0.9.0 beta",
+  "url_site": "https://luiskav.github.io/eventos-coimbra/",
+  "frases_sobre": [
+    "Nunca mais «só soube depois».",
+    "Do TAGV ao Convento, do Salão Brazil à Bissaya Barreto: está tudo aqui.",
+    "Grátis e sem registo: abre e usa."
+  ],
+  "responsavel": "A Minha Empresa, Unipessoal Lda. (TROCAR)",
+  "data_textos_legais": "2026-11-22"
 }

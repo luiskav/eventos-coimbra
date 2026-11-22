@@ -91,11 +91,15 @@ def filtrar(
     categoria: str | None = None,
     texto: str = "",
     agora: datetime | None = None,
+    entre: tuple[datetime, datetime] | None = None,
 ) -> list[Evento]:
+    """entre = (início, fim exclusivo) em hora local; tem prioridade sobre o período."""
     agora = agora or agora_local()
     resultado = eventos
-    if periodo:
-        inicio, fim = intervalo(periodo, agora)
+    if periodo and not entre:
+        entre = intervalo(periodo, agora)
+    if entre:
+        inicio, fim = entre
         resultado = [e for e in resultado if decorre_em(e, inicio, fim)]
     if categoria:
         resultado = [e for e in resultado if e.categoria == categoria]
@@ -139,6 +143,19 @@ def formatar_dia(dia: date, hoje: date) -> str:
     if dia == hoje + timedelta(days=1):
         return "Amanhã"
     return f"{DIAS[dia.weekday()].capitalize()}, {dia.day} de {MESES[dia.month - 1]}"
+
+
+def formatar_intervalo(inicio: date, fim: date, curto: bool = False) -> str:
+    """Título das datas escolhidas no calendário. curto=True para a pílula: '24/11 – 30/11'."""
+    if curto:
+        return f"{inicio.day}/{inicio.month}" + (
+            "" if fim == inicio else f" – {fim.day}/{fim.month}")
+    if fim == inicio:
+        return f"{DIAS[inicio.weekday()].capitalize()}, {inicio.day} de {MESES[inicio.month - 1]}"
+    if (inicio.year, inicio.month) == (fim.year, fim.month):
+        return f"De {inicio.day} a {fim.day} de {MESES[fim.month - 1]}"
+    return (f"De {inicio.day} de {MESES[inicio.month - 1][:3]} "
+            f"a {fim.day} de {MESES[fim.month - 1][:3]}")
 
 
 def formatar_hora(evento: Evento) -> str:

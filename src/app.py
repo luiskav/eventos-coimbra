@@ -53,6 +53,9 @@ class App:
         self.page.theme = construir_tema(cfg)
         self.page.dark_theme = self.page.theme
         self.page.theme_mode = ft.ThemeMode.DARK
+        # Calendário e textos do sistema em português
+        self.page.locale_configuration = ft.LocaleConfiguration(
+            supported_locales=[ft.Locale("pt", "PT")], current_locale=ft.Locale("pt", "PT"))
         self.page.bgcolor = cfg.cor_fundo
         self.page.on_view_pop = self._ao_voltar
         self.page.views.clear()
@@ -173,9 +176,22 @@ class App:
         self._agendar(self.partilhar, evento)
 
     async def partilhar(self, evento):
-        texto = agenda.texto_partilha(evento, self.config.nome)
+        await self._partilhar_texto(agenda.texto_partilha(evento, self.config.nome),
+                                    evento.titulo)
+
+    def pedir_partilha_app(self):
+        self._agendar(self.partilhar_app)
+
+    async def partilhar_app(self):
+        cfg = self.config
+        texto = f"{cfg.nome}: {cfg.slogan}"
+        if cfg.url_site:
+            texto += f"\n{cfg.url_site}"
+        await self._partilhar_texto(texto, cfg.nome)
+
+    async def _partilhar_texto(self, texto: str, assunto: str):
         try:
-            await ft.Share().share_text(texto, subject=evento.titulo)
+            await ft.Share().share_text(texto, subject=assunto)
         except Exception:
             # Sem partilha nativa (alguns browsers): copia para a área de transferência
             await ft.Clipboard().set(texto)

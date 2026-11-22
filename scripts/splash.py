@@ -142,6 +142,12 @@ def main(argv: list[str]) -> int:
     novo, mensagem = aplicar(caminho.read_text(encoding="utf-8"))
     caminho.write_text(novo, encoding="utf-8")
     print(f"{caminho}: {mensagem}")
+    # Versão beta: páginas legais ao lado do index.html (privacidade.html, termos.html)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from paginas_legais import gerar
+
+    for f in gerar(caminho.parent):
+        print(f"gerada: {f}")
     return 0
 
 
