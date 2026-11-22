@@ -1,0 +1,9 @@
+ID,Data início,Data fim,Hora,Nome,Categoria,Local,Morada,Preço,Descrição,Link,Fonte,Adicionado em
+x1,2026-09-30,2027-03-31,10:00,Sob Mares Frágeis,Exposição,UC Exploratório,"Rotunda das Lages, Coimbra",'Gratuito,Fotografias subaquáticas sobre a biodiversidade marinha.,https://www.exploratorio.pt/,Viral Agenda,2026-10-27
+x2,2026-10-31,2027-01-23,,Pêndulo – Ana Frois,Exposição,Casa das Artes Bissaya Barreto,,,Exposição de Ana Frois.,https://www.fbb.pt/,Agenda FBB,2026-11-21
+x3,2015-04-07,N/A,10:00,Núcleo da Guitarra e do Fado de Coimbra,Exposição,Torre de Anto,,'3 €,Núcleo museológico dedicado à guitarra de Coimbra.,https://www.cm-coimbra.pt/,coimbra.pt,2026-11-21
+x4,{hoje+2},{hoje+2},21:00,Concerto de Teste – Café Duplo,Música,Convento São Francisco,,'10 €,Concerto de teste.,https://www.coimbraconvento.pt/,Viral Agenda,2026-11-21
+x5,{hoje+3},{hoje+3},18:30,Bora Ver: Filme de Teste,Cinema,Auditório do IPDJ Coimbra,,'Gratuito,Sessão de cinema de teste.,https://www.uc.pt/,Agenda Coimbra,2026-11-21
+x6,{hoje+4},{hoje+4},17:30,Conversa de Viajantes,Conferência,Centro Cultural Penedo da Saudade,,,Conversa de teste.,https://www.viralagenda.com/,Viral Agenda,2026-11-21
+x7,{hoje+5},{hoje+5},10:00,Oficina de Ilustração,Workshop,Teatro da Cerca de São Bernardo,,,Workshop de teste.,https://www.aescoladanoite.pt/,Viral Agenda,2026-11-21
+x8,2026-10-27,,21:30,Concerto que já passou,Música,Salão Brazil,,,,https://www.salaobrazil.pt/,Viral Agenda,2026-10-27

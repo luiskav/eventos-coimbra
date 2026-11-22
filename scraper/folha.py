@@ -8,8 +8,12 @@ Cabeçalho aceite (linha 1, por qualquer ordem; maiúsculas e acentos ignorados)
     Nome | Data início | Hora | Data fim | Hora fim | Local | Morada |
     Categoria | Preço | Descrição | Link | Imagem
 Obrigatórios: Nome, Data início e Local. As outras colunas podem ficar vazias
-ou nem existir. Serve também a folha antiga da tarefa agendada (colunas ID,
-Fonte e Adicionado em são ignoradas).
+ou nem existir. Serve também a folha da tarefa agendada "Eventos Coimbra"
+(colunas ID, Fonte e Adicionado em são ignoradas).
+
+Data fim "N/A" (ou "permanente", "sem data") = evento sem data de fim: fica na app
+até ser ocultado, com "fim: N/A". Uma exposição com a Data fim vazia conta como N/A;
+os outros eventos com a Data fim vazia são de um só dia.
 """
 
 import csv
@@ -33,6 +37,9 @@ SINONIMOS = {
     "link": "url", "url": "url",
     "imagem": "imagem",
 }
+
+
+SEM_FIM = {"n a", "na", "permanente", "sem data", "sem fim"}
 
 
 def url_csv(url: str) -> str:
@@ -95,10 +102,14 @@ def ler_folha(texto_csv: str, link_padrao: str = "") -> tuple[list[dict], list[s
             ignoradas.append(f"linha {numero}: falta nome, local ou data válida")
             continue
         hora = _hora(celulas.get("hora", "")) or "00:00"
-        data_fim = _data_iso(celulas.get("data_fim", ""))
+        texto_fim = normalizar(celulas.get("data_fim", ""))
+        categoria = celulas.get("categoria") or "outro"
+        permanente = texto_fim in SEM_FIM or (
+            not texto_fim and normalizar(categoria).startswith("exposic"))
+        data_fim = None if permanente else _data_iso(celulas.get("data_fim", ""))
         hora_fim = _hora(celulas.get("hora_fim", ""))
         fim = None
-        if data_fim or hora_fim:
+        if (data_fim or hora_fim) and not permanente:
             fim = f"{data_fim or data}T{hora_fim or '23:59'}:00"
             if fim == f"{data}T23:59:00" and not hora_fim and data_fim == data:
                 fim = None  # evento de um só dia sem hora de fim
@@ -110,10 +121,11 @@ def ler_folha(texto_csv: str, link_padrao: str = "") -> tuple[list[dict], list[s
             "inicio": f"{data}T{hora}:00",
             "fim": fim,
             "local": local,
-            "categoria": celulas.get("categoria") or "outro",
+            "categoria": categoria,
             "preco": celulas.get("preco") or None,
             "descricao": celulas.get("descricao") or None,
             "url": celulas.get("url") or link_padrao,
             "imagem": celulas.get("imagem") or None,
+            "permanente": permanente,
         })
     return eventos, ignoradas

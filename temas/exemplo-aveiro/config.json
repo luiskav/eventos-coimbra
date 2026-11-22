@@ -10,6 +10,7 @@
     "desporto": "Desporto",
     "familia": "Família",
     "feira": "Feiras",
+    "cinema": "Cinema",
     "outro": "Outros"
   },
   "cor_primaria": "#5FA8F5",
@@ -20,6 +21,7 @@
     "desporto": "#2E7D32",
     "familia": "#EF6C00",
     "feira": "#6D4C41",
+    "cinema": "#AD1457",
     "outro": "#546E7A"
   },
   "logotipo": "logo.png",

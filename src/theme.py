@@ -16,6 +16,7 @@ ICONES_CATEGORIAS = {
     "academico": ft.Icons.SCHOOL,
     "familia": ft.Icons.FAMILY_RESTROOM,
     "feira": ft.Icons.STOREFRONT,
+    "cinema": ft.Icons.MOVIE,
     "outro": ft.Icons.EVENT,
 }
 

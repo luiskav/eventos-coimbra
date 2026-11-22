@@ -28,3 +28,22 @@ Depois: **Table Editor → events → Insert → Insert row** e preencher `titul
 (data e hora), `local`, `categoria` (um destes: musica, teatro, exposicao, desporto,
 academico, familia, feira, outro) e `url`. A `chave` e a fonte preenchem-se sozinhas.
 O evento aparece na app no momento seguinte em que alguém a abrir.
+
+## 3. Folha da tarefa agendada "Eventos Coimbra"
+
+A tarefa agendada do Claude "Eventos Coimbra diários (Sheet + Supabase)" pesquisa
+eventos todos os dias às 06:30 e escreve-os na Google Sheet "Eventos Coimbra".
+O scraper lê essa folha às 07:47 UTC (fonte `tarefa-claude` no `fontes.yaml`),
+como lê a folha de introdução manual. Não é preciso copiar nada.
+
+- **Categorias da folha:** Música, Teatro, Cinema, Exposição e Feira passam direto.
+  Conferência e Workshop ficam como **Académico**.
+- **Data fim:** se for "N/A" (ou ficar vazia numa exposição), o evento é
+  **permanente**: fica na app com "fim: N/A" até ser ocultado no Supabase
+  (`estado = oculto`).
+- **Repetidos:** antes de gravar, o scraper compara cada evento com os que já
+  existem, de todas as fontes. Se for provavelmente o mesmo (nome parecido, mesmo
+  dia e hora próxima, ou períodos sobrepostos nas exposições), não cria outro:
+  completa o que já existe com o que lhe faltar (preço, descrição, imagem, fim,
+  categoria). O registo da execução no Actions lista cada repetido em
+  `repetido — <novo> = #<id> <existente>`.

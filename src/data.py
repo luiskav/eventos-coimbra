@@ -18,7 +18,7 @@ from urllib.parse import urlencode
 from config import PASTA_CONF, Config
 from models import Evento
 
-CAMPOS = "id,titulo,inicio,fim,local,categoria,preco,descricao,url,imagem"
+CAMPOS = "id,titulo,inicio,fim,local,categoria,preco,descricao,url,imagem,permanente"
 LIMITE = 500
 
 
@@ -89,7 +89,7 @@ class FonteDados:
             [
                 ("select", CAMPOS),
                 ("inicio", f"lt.{ate}"),
-                ("or", f"(inicio.gte.{desde},fim.gte.{desde})"),
+                ("or", f"(permanente.is.true,inicio.gte.{desde},fim.gte.{desde})"),
                 ("order", "inicio.asc"),
                 ("limit", str(LIMITE)),
             ]

@@ -11,6 +11,7 @@
     "academico": "Académico",
     "familia": "Família",
     "feira": "Feiras",
+    "cinema": "Cinema",
     "outro": "Outros"
   },
   "cor_primaria": "#C9A55C",
@@ -22,6 +23,7 @@
     "academico": "#8FA8F5",
     "familia": "#F2B35E",
     "feira": "#C9A27E",
+    "cinema": "#F28FB8",
     "outro": "#9AA4AE"
   },
   "logotipo": "logo.png",

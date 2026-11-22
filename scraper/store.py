@@ -9,8 +9,11 @@ from datetime import UTC, datetime, timedelta
 
 import httpx
 
+from scraper import repetidos
 from scraper.models import EventoExtraido
 from scraper.normalize import chave_evento
+
+CAMPOS_EXISTENTES = "id,chave,titulo,inicio,fim,categoria,preco,descricao,imagem,permanente"
 
 
 class ErroArmazem(Exception):
@@ -72,12 +75,31 @@ class Armazem:
             "descricao": ev.descricao,
             "url": ev.url,
             "imagem": ev.imagem,
+            "permanente": ev.permanente,
             "source_id": source_id,
             # "estado" não vai: um evento ocultado à mão continua oculto
         }
 
+    def eventos_atuais(self, agora: datetime | None = None) -> list[dict]:
+        """Eventos de todas as fontes que ainda não passaram (para procurar repetidos)."""
+        agora = agora or datetime.now(UTC)
+        desde = (agora - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        resposta = self._verificar(self.cliente.get(
+            "/events",
+            params={"select": CAMPOS_EXISTENTES,
+                    "or": f"(permanente.is.true,inicio.gte.{desde},fim.gte.{desde})"},
+        ))
+        return [linha for linha in resposta.json() if linha.get("titulo")]
+
     def gravar_eventos(self, source_id: int, eventos: list[EventoExtraido]) -> int:
-        """Upsert pela chave. Devolve quantos eventos são novos."""
+        """Grava os eventos e devolve quantos são novos.
+
+        - Mesma chave: atualiza o evento (upsert).
+        - Provável repetido de um evento de outra fonte: não cria outro; só
+          completa o que já existe com o que lhe faltar (preço, imagem, ...).
+        Os repetidos ficam em self.repetidos, para o resumo da execução.
+        """
+        self.repetidos: list[str] = []
         if not eventos:
             return 0
         linhas = {}
@@ -85,11 +107,35 @@ class Armazem:
             linha = self.para_linha(ev, source_id)
             linhas[linha["chave"]] = linha
         existentes = self.chaves_existentes(source_id)
-        self._verificar(self.cliente.post(
-            "/events", params={"on_conflict": "chave"}, json=list(linhas.values()),
-            headers={"Prefer": "resolution=merge-duplicates,return=minimal"},
-        ))
-        return len(set(linhas) - existentes)
+        atuais = self.eventos_atuais()
+        chaves_atuais = {e["chave"] for e in atuais}
+
+        a_gravar = []
+        for chave, linha in linhas.items():
+            if chave in chaves_atuais:
+                a_gravar.append(linha)
+                continue
+            igual = next((e for e in atuais if repetidos.provavel_repetido(linha, e)), None)
+            if igual is None:
+                a_gravar.append(linha)
+                continue
+            extra = repetidos.complemento(igual, linha)
+            if extra:
+                self._verificar(self.cliente.patch(
+                    "/events", params={"id": f"eq.{igual['id']}"}, json=extra,
+                    headers={"Prefer": "return=minimal"},
+                ))
+                igual.update(extra)
+            self.repetidos.append(
+                f"{linha['titulo']} = #{igual['id']} {igual['titulo']}"
+                + (f" (completado: {', '.join(extra)})" if extra else ""))
+
+        if a_gravar:
+            self._verificar(self.cliente.post(
+                "/events", params={"on_conflict": "chave"}, json=a_gravar,
+                headers={"Prefer": "resolution=merge-duplicates,return=minimal"},
+            ))
+        return len({linha["chave"] for linha in a_gravar} - existentes)
 
     def registar_execucao(self, registo: dict) -> None:
         self._verificar(self.cliente.post(
