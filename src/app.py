@@ -6,16 +6,18 @@
   Android (ou a seta da barra) fecha-a através de page.on_view_pop.
 """
 
+import asyncio
+import sys
 from datetime import datetime
 
 import flet as ft
 
 import agenda
 from config import Config, carregar_config
-from data import FonteDados
+from data import CacheEventos, FonteDados
 from favoritos import Favoritos
-from theme import construir_tema
-from views import ecra_evento, ecra_favoritos, ecra_sobre
+from theme import FONTES, construir_tema
+from views import ecra_arranque, ecra_evento, ecra_favoritos, ecra_sobre
 from views.ecra_agenda import EcraAgenda
 
 SEPARADORES = ["agenda", "favoritos", "sobre"]
@@ -27,9 +29,11 @@ class App:
         self.page = page
         self.config = config or carregar_config()
         self.dados = dados or FonteDados(self.config)
+        armazenamento = armazenamento if armazenamento is not None else ft.SharedPreferences()
         # FASE 4: favoritos (antes disso, não há coração nos cartões)
-        self.favoritos = Favoritos(armazenamento if armazenamento is not None
-                                   else ft.SharedPreferences())
+        self.favoritos = Favoritos(armazenamento)
+        self.cache = CacheEventos(armazenamento)  # bloco G: cópia local dos eventos
+        self.a_carregar = True
         self.eventos = []
         self.separador = 0
         self.evento_aberto = None
@@ -37,12 +41,48 @@ class App:
 
     # ------------------------------------------------------------------
     async def iniciar(self):
-        self.page.title = self.config.nome
-        self.page.theme = construir_tema(self.config)  # FASE 5
+        """Arranque em duas fases (bloco G, passos 26 e 29).
+
+        1. Mostra logo o ecrã de arranque animado e, se houver, os eventos
+           guardados no dispositivo da última vez.
+        2. Lê os eventos da rede e atualiza o ecrã sem ninguém ter de esperar.
+        """
+        cfg = self.config
+        self.page.title = cfg.nome
+        self.page.fonts = FONTES
+        self.page.theme = construir_tema(cfg)
+        self.page.dark_theme = self.page.theme
+        self.page.theme_mode = ft.ThemeMode.DARK
+        self.page.bgcolor = cfg.cor_fundo
         self.page.on_view_pop = self._ao_voltar
+        self.page.views.clear()
+        self.page.views.append(ecra_arranque.construir(cfg))
+        self.page.update()
+
         await self.favoritos.carregar()  # FASE 4
-        self.eventos = self.dados.carregar()
+        guardados = await self.cache.ler()
+        if guardados:
+            self.eventos = guardados
+            self.dados.origem = "cache"
         self.ecra_agenda = EcraAgenda(self)
+        self.mostrar()  # agenda com os eventos guardados, ou com cartões cinzentos
+
+        await self.atualizar_da_rede(guardados)
+
+    async def atualizar_da_rede(self, guardados=None):
+        if sys.platform == "emscripten":  # no browser não há threads
+            await asyncio.sleep(0)  # deixa o ecrã desenhar-se antes do pedido
+            eventos = self.dados.carregar()
+        else:
+            eventos = await asyncio.to_thread(self.dados.carregar)
+        if self.dados.origem == "exemplo" and guardados:
+            self.dados.origem = "cache"  # sem rede: melhor os guardados do que os de exemplo
+        else:
+            self.eventos = eventos
+            if self.dados.origem == "supabase":
+                await self.cache.guardar(eventos)
+        self.a_carregar = False
+        self.ecra_agenda.atualizar()
         self.mostrar()
 
     def agora(self) -> datetime:
@@ -60,11 +100,15 @@ class App:
         else:
             conteudo = ecra_sobre.construir(self)
 
+        cfg = self.config
         return ft.View(
             route="/",
-            appbar=ft.AppBar(title=ft.Text(self.config.nome)),
-            controls=[conteudo],
+            bgcolor=cfg.cor_fundo,
+            controls=[ft.SafeArea(content=conteudo, expand=True)],
             navigation_bar=ft.NavigationBar(
+                bgcolor=cfg.cor_superficie,
+                indicator_color=ft.Colors.with_opacity(0.18, cfg.cor_destaque),
+                elevation=0,
                 selected_index=self.separador,
                 on_change=self._ao_mudar_separador,
                 destinations=[
@@ -108,9 +152,8 @@ class App:
         self.fechar_evento()
 
     def recarregar(self):
-        self.eventos = self.dados.carregar()
-        self.ecra_agenda.atualizar()
-        self.mostrar()
+        self.a_carregar = True
+        self._agendar(self.atualizar_da_rede, self.eventos)
 
     # ------------------------------------------------------------------
     # FASE 4: ações assíncronas (favoritos e partilha)

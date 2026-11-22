@@ -138,3 +138,43 @@ class FonteDados:
         except ErroDados:
             self.origem = "exemplo"
             return self.eventos_exemplo(agora_utc)
+
+
+# ---------------------------------------------------------------------------
+# Bloco G, passo 29: cópia local dos eventos, para a app abrir sem esperar pela rede
+# ---------------------------------------------------------------------------
+
+
+class CacheEventos:
+    """Guarda a última lista de eventos no dispositivo (SharedPreferences na app).
+
+    O armazenamento é o mesmo dos favoritos e é injetado (nos testes, um dicionário).
+    """
+
+    def __init__(self, armazenamento, prefixo: str = "eventos"):
+        self.armazenamento = armazenamento
+        self.chave = f"{prefixo}.cache"
+
+    async def ler(self, agora_utc: datetime | None = None) -> list[Evento]:
+        agora_utc = agora_utc or datetime.now(UTC)
+        try:
+            texto = await self.armazenamento.get(self.chave)
+            linhas = json.loads(texto) if texto else []
+        except Exception:  # cópia estragada ou armazenamento indisponível
+            return []
+        eventos = []
+        for linha in linhas:
+            try:
+                ev = Evento.de_dict(linha)
+            except (KeyError, ValueError, TypeError):
+                continue
+            if (ev.fim or ev.inicio) >= agora_utc - timedelta(hours=12):  # só os que não passaram
+                eventos.append(ev)
+        return eventos
+
+    async def guardar(self, eventos: list[Evento]) -> None:
+        try:
+            await self.armazenamento.set(
+                self.chave, json.dumps([e.para_dict() for e in eventos], ensure_ascii=False))
+        except Exception:
+            pass  # a cópia local é uma ajuda, nunca um motivo para a app falhar
