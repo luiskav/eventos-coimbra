@@ -28,7 +28,7 @@
   },
   "logotipo": "logo.png",
   "contacto": "geral@aminhaempresa.pt",
-  "texto_sobre": "Concertos, teatro, cinema, exposições e feiras de toda a cidade, juntos numa agenda que se atualiza sozinha todas as manhãs. Escolhe, guarda nos favoritos e partilha com quem vai contigo.",
+  "texto_sobre": "Concertos, desporto, teatro, cinema, exposições e feiras de toda a cidade, juntos numa agenda que se atualiza sozinha todas as manhãs. Escolhe, guarda nos favoritos e partilha com quem vai contigo.",
   "cor_fundo": "#0A0A0A",
   "cor_superficie": "#161618",
   "cor_superficie_2": "#1F1F22",
@@ -41,7 +41,7 @@
   "versao": "0.9.0 beta",
   "url_site": "https://luiskav.github.io/eventos-coimbra/",
   "frases_sobre": [
-    "Nunca mais «só soube depois».",
+    "Nunca mais digas «Não se passa nada em Coimbra!»",
     "Do TAGV ao Convento, do Salão Brazil à Bissaya Barreto: está tudo aqui.",
     "Grátis e sem registo: abre e usa."
   ],
