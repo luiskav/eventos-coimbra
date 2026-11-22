@@ -128,7 +128,8 @@ class EcraAgenda:
         else:
             hoje = self.app.agora().date()
             visiveis = self.eventos_visiveis()
-            for dia, eventos in agenda.agrupar_por_dia(visiveis[: self.limite]):
+            desde = agenda.intervalo(self.periodo, self.app.agora())[0].date()
+            for dia, eventos in agenda.agrupar_por_dia(visiveis[: self.limite], desde):
                 controlos.append(cabecalho_dia(self.app, dia, hoje))
                 controlos.extend(cartao_evento(self.app, ev, hoje) for ev in eventos)
             if len(visiveis) > self.limite:

@@ -15,9 +15,18 @@ from scraper.normalize import normalizar
 
 LISBOA = ZoneInfo("Europe/Lisbon")
 CATEGORIAS = ("musica", "teatro", "exposicao", "desporto", "academico", "familia", "feira",
-              "outro")
+              "cinema", "outro")
 Categoria = Literal["musica", "teatro", "exposicao", "desporto", "academico", "familia",
-                    "feira", "outro"]
+                    "feira", "cinema", "outro"]
+
+# Nomes que aparecem nas fontes (já normalizados) -> categoria da app
+SINONIMOS_CATEGORIAS = {
+    "exposicoes": "exposicao", "feiras": "feira", "mercado": "feira", "concerto": "musica",
+    "conferencia": "academico", "conferencias": "academico", "workshop": "academico",
+    "workshops": "academico", "palestra": "academico", "seminario": "academico",
+    "oficina": "academico", "debate": "academico", "apresentacao": "academico",
+    "filme": "cinema", "filmes": "cinema", "cineclube": "cinema",
+}
 
 
 def _para_utc(valor: datetime) -> datetime:
@@ -37,6 +46,7 @@ class EventoExtraido(BaseModel):
     descricao: str | None = None
     url: str
     imagem: str | None = None
+    permanente: bool = False  # sem data de fim (ex.: exposição permanente): na app, "fim: N/A"
 
     @field_validator("titulo", "local", mode="before")
     @classmethod
@@ -47,6 +57,7 @@ class EventoExtraido(BaseModel):
     @classmethod
     def categoria_conhecida(cls, v):
         v = normalizar(v or "outro")  # 'Exposição' -> 'exposicao'
+        v = SINONIMOS_CATEGORIAS.get(v, v)  # 'Conferência' -> 'academico'
         return v if v in CATEGORIAS else "outro"
 
     @field_validator("descricao", mode="before")
@@ -64,7 +75,7 @@ class EventoExtraido(BaseModel):
 
     @model_validator(mode="after")
     def fim_depois_do_inicio(self):
-        if self.fim is not None and self.fim < self.inicio:
+        if self.permanente or (self.fim is not None and self.fim < self.inicio):
             self.fim = None
         return self
 
@@ -90,7 +101,9 @@ def validar_eventos(
             rejeitados.append(f"{bruto.get('titulo', '?')}: {str(erro).splitlines()[0]}")
             continue
         fim = ev.fim or ev.inicio
-        if fim < agora - timedelta(days=1):
+        if ev.permanente:
+            validos.append(ev)  # sem data de fim: continua a decorrer
+        elif fim < agora - timedelta(days=1):
             rejeitados.append(f"{ev.titulo}: já passou")
         elif ev.inicio > agora + timedelta(days=365):
             rejeitados.append(f"{ev.titulo}: data a mais de um ano")

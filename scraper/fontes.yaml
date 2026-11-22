@@ -86,3 +86,14 @@ fontes:
     link_padrao: https://luiskav.github.io/eventos-coimbra/
     categoria: outro
     ativa: true
+
+  # Folha da tarefa agendada do Claude "Eventos Coimbra diários (Sheet + Supabase)".
+  # Mesma leitura da folha manual; os repetidos de outras fontes só completam o que existe.
+  # Partilhada como "Qualquer pessoa com o link: Leitor".
+  - id: tarefa-claude
+    nome: Tarefa Claude (Eventos Coimbra)
+    tipo: folha
+    url: https://docs.google.com/spreadsheets/d/1ucBVK7mQd9A1wc9C-e_Il1FmILY53lvqRdebtbL-W_U/edit#gid=0
+    link_padrao: https://luiskav.github.io/eventos-coimbra/
+    categoria: outro
+    ativa: true

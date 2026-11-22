@@ -9,7 +9,7 @@ from dataclasses import dataclass
 MODELO = "claude-haiku-5-5"
 
 CATEGORIAS = ["musica", "teatro", "exposicao", "desporto", "academico", "familia", "feira",
-              "outro"]
+              "cinema", "outro"]
 
 FERRAMENTA = {
     "name": "guardar_eventos",

@@ -16,7 +16,7 @@ Todas as cores e letras vêm de `src/conf/config.json`: para outra cidade, muda-
 
 Cores das categorias (só em etiquetas pequenas, com fundo a 14 %):
 música `#B48CF2`, teatro `#F2786D`, exposição `#5FC8C8`, desporto `#7BC67B`,
-académico `#8FA8F5`, família `#F2B35E`, feira `#C9A27E`, outro `#9AA4AE`.
+académico `#8FA8F5`, família `#F2B35E`, feira `#C9A27E`, cinema `#F28FB8`, outro `#9AA4AE`.
 
 ## Letras
 

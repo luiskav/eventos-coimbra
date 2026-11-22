@@ -42,7 +42,8 @@ def test_pedido_tem_chave_e_filtros(config):
     q = parse_qs(urlparse(url).query)
     assert q["order"] == ["inicio.asc"] and q["limit"] == ["500"]
     assert q["inicio"] == ["lt.2026-12-17T12:00:00Z"]           # 30 dias + 1
-    assert q["or"] == ["(inicio.gte.2026-11-16T00:00:00Z,fim.gte.2026-11-16T00:00:00Z)"]
+    assert q["or"] == ["(permanente.is.true,inicio.gte.2026-11-16T00:00:00Z,"
+                       "fim.gte.2026-11-16T00:00:00Z)"]
 
 
 def test_sem_rede_usa_exemplos(config):

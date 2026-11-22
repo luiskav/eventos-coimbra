@@ -144,6 +144,8 @@ def _validar_e_gravar(resultado, registo: dict, base_url: str, agora: datetime, 
         source_id = armazem.garantir_fonte(fonte)
         registo["source_id"] = source_id
         registo["novos"] = armazem.gravar_eventos(source_id, validos)
+        for linha in getattr(armazem, "repetidos", []):
+            print(f"  repetido — {linha}")
     return registo
 
 

@@ -79,6 +79,8 @@ def normalizar(texto: str) -> str:
 def decorre_em(evento: Evento, inicio: datetime, fim: datetime) -> bool:
     """True se o evento acontece (pelo menos em parte) entre início e fim (hora local)."""
     ev_inicio = hora_local(evento.inicio)
+    if evento.permanente:
+        return ev_inicio < fim
     ev_fim = hora_local(evento.fim) if evento.fim else ev_inicio
     return ev_inicio < fim and ev_fim >= inicio
 
@@ -107,11 +109,17 @@ def filtrar(
     return sorted(resultado, key=lambda e: e.inicio)
 
 
-def agrupar_por_dia(eventos: list[Evento]) -> list[tuple[date, list[Evento]]]:
+def agrupar_por_dia(eventos: list[Evento],
+                    desde: date | None = None) -> list[tuple[date, list[Evento]]]:
+    """Agrupa por dia de início. Os que já começaram (ex.: exposições) ficam no
+    primeiro dia do período (desde), em vez de num dia que já passou."""
     grupos: dict[date, list[Evento]] = {}
     for ev in sorted(eventos, key=lambda e: e.inicio):
-        grupos.setdefault(hora_local(ev.inicio).date(), []).append(ev)
-    return list(grupos.items())
+        dia = hora_local(ev.inicio).date()
+        if desde and dia < desde:
+            dia = desde
+        grupos.setdefault(dia, []).append(ev)
+    return sorted(grupos.items())
 
 
 # ---------------------------------------------------------------------------
@@ -136,6 +144,8 @@ def formatar_dia(dia: date, hoje: date) -> str:
 def formatar_hora(evento: Evento) -> str:
     inicio = hora_local(evento.inicio)
     texto = f"{inicio:%H:%M}"
+    if evento.permanente:
+        return f"{texto} · fim: N/A"
     if evento.fim:
         fim = hora_local(evento.fim)
         texto += f"–{fim:%H:%M}" if fim.date() == inicio.date() else f" até {fim.day}/{fim.month}"

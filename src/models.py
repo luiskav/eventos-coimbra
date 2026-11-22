@@ -26,6 +26,7 @@ class Evento:
     preco: str | None = None
     descricao: str | None = None
     imagem: str | None = None
+    permanente: bool = False  # sem data de fim: mostra "fim: N/A"
 
     @classmethod
     def de_dict(cls, d: dict) -> "Evento":
@@ -43,6 +44,7 @@ class Evento:
             descricao=d.get("descricao"),
             url=str(d.get("url") or ""),
             imagem=d.get("imagem"),
+            permanente=bool(d.get("permanente")),
         )
 
     def para_dict(self) -> dict:
@@ -51,5 +53,5 @@ class Evento:
             "id": self.id, "titulo": self.titulo, "inicio": self.inicio.isoformat(),
             "fim": self.fim.isoformat() if self.fim else None, "local": self.local,
             "categoria": self.categoria, "preco": self.preco, "descricao": self.descricao,
-            "url": self.url, "imagem": self.imagem,
+            "url": self.url, "imagem": self.imagem, "permanente": self.permanente,
         }
