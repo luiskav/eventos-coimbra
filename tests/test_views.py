@@ -71,6 +71,7 @@ def textos(controlo) -> list[str]:
 def test_agenda_mostra_dias_e_eventos(config, eventos):
     app, pagina = criar_app(config, eventos)
     t = textos(app.ecra_agenda.lista)
+    assert "Hoje em Coimbra" in t and "Segunda, 16 de novembro" in t
     assert "Hoje" in t and "Concerto de Fado" in t
     assert "Festival de Inverno" not in t  # está a mais de 30 dias
     assert len(pagina.views) == 1
@@ -79,6 +80,7 @@ def test_agenda_mostra_dias_e_eventos(config, eventos):
 def test_agenda_filtra_por_categoria_e_texto(config, eventos):
     app, _ = criar_app(config, eventos)
     ecra: EcraAgenda = app.ecra_agenda
+    ecra.periodo = "30_dias"
     ecra._escolher_categoria("teatro")
     assert "Peça Infantil" in textos(ecra.lista) and "Concerto de Fado" not in textos(ecra.lista)
     ecra._escolher_categoria("teatro")  # segundo toque limpa o filtro
@@ -125,3 +127,44 @@ def test_mudar_separador_e_sobre(config, eventos):
     app._ao_mudar_separador(E())
     assert app.separador == 2 and pagina.views[0].navigation_bar.selected_index == 2
     assert "Eventos Teste" in textos(ecra_sobre.construir(app))
+
+
+# ---------- bloco G ----------
+def test_arranque_e_esqueletos(config):
+    from views import ecra_arranque
+
+    vista = ecra_arranque.construir(config)
+    assert "A preparar a agenda…" in textos(vista.controls[0])
+    app, _ = criar_app(config, [])
+    app.a_carregar = True
+    app.ecra_agenda.atualizar()
+    assert len(app.ecra_agenda.lista.controls) == 1 + 4  # cabeçalho + 4 cartões cinzentos
+
+
+def test_ver_mais(config):
+    from datetime import UTC, timedelta
+    from datetime import datetime as dt
+
+    from tests.conftest import fazer_evento
+    from views import ecra_agenda
+
+    base = dt(2026, 11, 16, 20, 0, tzinfo=UTC)
+    muitos = [fazer_evento(i, f"Evento {i}", base + timedelta(minutes=i)) for i in range(70)]
+    app, _ = criar_app(config, muitos)
+    t = textos(app.ecra_agenda.lista)
+    assert f"Ver mais ({70 - ecra_agenda.POR_PAGINA})" in t and "Evento 69" not in t
+    app.ecra_agenda._ver_mais()
+    assert "Evento 69" in textos(app.ecra_agenda.lista)
+
+
+def test_tema_escuro_e_letras(config):
+    import theme
+
+    t = theme.construir_tema(config)
+    assert t.scaffold_bgcolor == config.cor_fundo and t.font_family == "Inter"
+    app, pagina = criar_app(config, [])
+    assert pagina.fonts == theme.FONTES and pagina.bgcolor == config.cor_fundo
+    from pathlib import Path
+
+    pasta = Path(__file__).resolve().parent.parent / "src" / "assets"
+    assert all((pasta / ficheiro).exists() for ficheiro in theme.FONTES.values())

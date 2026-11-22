@@ -13,18 +13,27 @@
     "feira": "Feiras",
     "outro": "Outros"
   },
-  "cor_primaria": "#8E1B3A",
+  "cor_primaria": "#C9A55C",
   "cores_categorias": {
-    "musica": "#7B1FA2",
-    "teatro": "#C62828",
-    "exposicao": "#00838F",
-    "desporto": "#2E7D32",
-    "academico": "#1A237E",
-    "familia": "#EF6C00",
-    "feira": "#6D4C41",
-    "outro": "#546E7A"
+    "musica": "#B48CF2",
+    "teatro": "#F2786D",
+    "exposicao": "#5FC8C8",
+    "desporto": "#7BC67B",
+    "academico": "#8FA8F5",
+    "familia": "#F2B35E",
+    "feira": "#C9A27E",
+    "outro": "#9AA4AE"
   },
   "logotipo": "logo.png",
   "contacto": "geral@aminhaempresa.pt",
-  "texto_sobre": "Agenda recolhida automaticamente dos sites das salas e entidades da cidade. Confirma sempre a informação na fonte antes de saíres de casa."
+  "texto_sobre": "Agenda recolhida automaticamente dos sites das salas e entidades da cidade. Confirma sempre a informação na fonte antes de saíres de casa.",
+  "cor_fundo": "#0A0A0A",
+  "cor_superficie": "#161618",
+  "cor_superficie_2": "#1F1F22",
+  "cor_texto": "#F5F5F7",
+  "cor_texto_2": "#8E8E93",
+  "cor_destaque": "#C9A55C",
+  "fonte_texto": "Inter",
+  "fonte_destaque": "InterSemi",
+  "fonte_titulos": "InterDisplay"
 }

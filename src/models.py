@@ -44,3 +44,12 @@ class Evento:
             url=str(d.get("url") or ""),
             imagem=d.get("imagem"),
         )
+
+    def para_dict(self) -> dict:
+        """O inverso de de_dict, para guardar a cópia local (bloco G, passo 29)."""
+        return {
+            "id": self.id, "titulo": self.titulo, "inicio": self.inicio.isoformat(),
+            "fim": self.fim.isoformat() if self.fim else None, "local": self.local,
+            "categoria": self.categoria, "preco": self.preco, "descricao": self.descricao,
+            "url": self.url, "imagem": self.imagem,
+        }

@@ -24,6 +24,16 @@ PADRAO: dict = {
     "logotipo": "",
     "contacto": "",
     "texto_sobre": "",
+    # FASE G: tema escuro e letras (ver docs/DESIGN.md)
+    "cor_fundo": "#0A0A0A",
+    "cor_superficie": "#161618",
+    "cor_superficie_2": "#1F1F22",
+    "cor_texto": "#F5F5F7",
+    "cor_texto_2": "#8E8E93",
+    "cor_destaque": "#C9A55C",
+    "fonte_texto": "Inter",
+    "fonte_destaque": "InterSemi",
+    "fonte_titulos": "InterDisplay",
 }
 
 
@@ -39,6 +49,15 @@ class Config:
     logotipo: str = ""
     contacto: str = ""
     texto_sobre: str = ""
+    cor_fundo: str = "#0A0A0A"
+    cor_superficie: str = "#161618"
+    cor_superficie_2: str = "#1F1F22"
+    cor_texto: str = "#F5F5F7"
+    cor_texto_2: str = "#8E8E93"
+    cor_destaque: str = "#C9A55C"
+    fonte_texto: str = "Inter"
+    fonte_destaque: str = "InterSemi"
+    fonte_titulos: str = "InterDisplay"
     supabase_url: str = ""
     supabase_anon_key: str = ""
 

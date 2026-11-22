@@ -1,92 +1,84 @@
-"""Ecrã de detalhe de um evento (Fase 3, tarefa 3.8; botões extra na Fase 4, tarefa 4.4)."""
+"""Ecrã de detalhe de um evento (Fase 3, tarefa 3.8; botões extra na Fase 4, tarefa 4.4;
+novo aspeto no bloco G, passo 28)."""
 
 import flet as ft
 
 import agenda
+import theme
 from models import Evento
-from theme import icone_categoria
 
 
-def _linha(icone, texto: str) -> ft.Control:
+def _linha(app, icone, texto: str) -> ft.Control:
+    cfg = app.config
     return ft.Row(
-        [ft.Icon(icone, size=20), ft.Text(texto, expand=True, selectable=True)],
-        vertical_alignment=ft.CrossAxisAlignment.START,
+        [ft.Container(ft.Icon(icone, size=18, color=cfg.cor_destaque),
+                      width=36, height=36, bgcolor=cfg.cor_superficie_2, border_radius=10,
+                      alignment=ft.Alignment.CENTER),
+         ft.Text(texto, expand=True, selectable=True, size=15, color=cfg.cor_texto)],
+        spacing=12,
     )
 
 
 def construir(app, evento: Evento) -> ft.View:
+    cfg = app.config
     hoje = app.agora().date()
-    cor = app.config.cor_categoria(evento.categoria)
     favorito = app.favoritos.contem(evento.id)  # FASE 4
     dia = agenda.formatar_dia(agenda.hora_local(evento.inicio).date(), hoje)
 
-    conteudo = [
-        ft.Container(
-            content=ft.Row(
-                [ft.Icon(icone_categoria(evento.categoria), color=ft.Colors.WHITE, size=18),
-                 ft.Text(app.config.rotulo_categoria(evento.categoria), color=ft.Colors.WHITE)],
-                tight=True,
-            ),
-            bgcolor=cor,
-            padding=ft.Padding.symmetric(horizontal=10, vertical=4),
-            border_radius=12,
-        ),
-        ft.Text(evento.titulo, size=24, weight=ft.FontWeight.BOLD, selectable=True),
-        _linha(ft.Icons.CALENDAR_TODAY, f"{dia}, {agenda.formatar_hora(evento)}"),
-        _linha(ft.Icons.PLACE, evento.local),
+    conteudo: list[ft.Control] = []
+    if evento.imagem:
+        conteudo.append(ft.Container(
+            ft.Image(src=evento.imagem, height=220, fit=ft.BoxFit.COVER,
+                     error_content=ft.Container(height=0)),
+            border_radius=theme.RAIO_CARTAO, clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+        ))
+    conteudo += [
+        theme.etiqueta_categoria(cfg, evento.categoria),
+        theme.titulo(cfg, evento.titulo, 28, selectable=True),
+        _linha(app, ft.Icons.CALENDAR_TODAY, f"{dia}, {agenda.formatar_hora(evento)}"),
+        _linha(app, ft.Icons.PLACE, evento.local),
     ]
     if evento.preco:
-        conteudo.append(_linha(ft.Icons.EURO, evento.preco))
-    if evento.imagem:
-        conteudo.append(ft.Image(src=evento.imagem, border_radius=8, fit=ft.BoxFit.COVER,
-                                 height=200))
+        conteudo.append(_linha(app, ft.Icons.EURO, evento.preco))
     if evento.descricao:
-        conteudo.append(ft.Text(evento.descricao, selectable=True))
+        conteudo.append(ft.Container(
+            ft.Text(evento.descricao, selectable=True, size=15, color=cfg.cor_texto_2),
+            padding=ft.Padding.only(top=4),
+        ))
 
-    conteudo.append(
-        ft.Button(
-            content=ft.Text("Ver na fonte"),
-            icon=ft.Icons.OPEN_IN_NEW,
-            url=evento.url,
-        )
-    )
+    conteudo.append(theme.botao(cfg, "Ver na fonte", ft.Icons.OPEN_IN_NEW, url=evento.url,
+                                principal=True))
     # FASE 4: mapa, calendário e partilha
-    conteudo.append(
-        ft.Row(
-            [
-                ft.OutlinedButton(
-                    content=ft.Text("Mapa"), icon=ft.Icons.MAP,
-                    url=agenda.url_mapa(evento, app.config.cidade),
-                ),
-                ft.OutlinedButton(
-                    content=ft.Text("Calendário"), icon=ft.Icons.EVENT_AVAILABLE,
-                    url=agenda.url_calendario(evento, app.config.cidade),
-                ),
-                ft.OutlinedButton(
-                    content=ft.Text("Partilhar"), icon=ft.Icons.SHARE,
-                    on_click=lambda e: app.pedir_partilha(evento),
-                ),
-            ],
-            wrap=True,
-        )
-    )
-    conteudo.append(
-        ft.Text("Confirma sempre data, hora e preço na fonte.", size=12,
-                color=ft.Colors.OUTLINE, italic=True)
-    )
+    conteudo.append(ft.Row(
+        [
+            theme.botao(cfg, "Mapa", ft.Icons.MAP,
+                        url=agenda.url_mapa(evento, cfg.cidade)),
+            theme.botao(cfg, "Calendário", ft.Icons.EVENT_AVAILABLE,
+                        url=agenda.url_calendario(evento, cfg.cidade)),
+            theme.botao(cfg, "Partilhar", ft.Icons.SHARE,
+                        on_click=lambda e: app.pedir_partilha(evento)),
+        ],
+        wrap=True, spacing=8, run_spacing=8,
+    ))
+    conteudo.append(theme.secundario(cfg, "Confirma sempre data, hora e preço na fonte.", 12,
+                                     italic=True))
 
     return ft.View(
         route=f"/evento/{evento.id}",
+        bgcolor=cfg.cor_fundo,
         appbar=ft.AppBar(
-            title=ft.Text(app.config.nome),
+            bgcolor=cfg.cor_fundo,
+            force_material_transparency=True,
+            title=theme.secundario(cfg, cfg.nome, 15),
             actions=[
                 ft.IconButton(
                     icon=ft.Icons.FAVORITE if favorito else ft.Icons.FAVORITE_BORDER,
+                    icon_color=cfg.cor_destaque if favorito else cfg.cor_texto,
                     tooltip="Favorito",
                     on_click=lambda e: app.pedir_alternar_favorito(evento),
                 )
             ],
         ),
-        controls=[ft.Column(conteudo, spacing=12, scroll=ft.ScrollMode.AUTO, expand=True)],
-        padding=16,
+        controls=[ft.Column(conteudo, spacing=16, scroll=ft.ScrollMode.AUTO, expand=True)],
+        padding=ft.Padding.only(left=20, right=20, bottom=24),
     )

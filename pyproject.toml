@@ -16,6 +16,11 @@ product = "Eventos Coimbra"
 company = "luiskav"       # TROCAR
 copyright = "Copyright (C) 2026 luiskav"
 
+# Bloco G: ecrã de arranque do Android em preto, como o resto da app
+[tool.flet.splash]
+color = "#0A0A0A"
+dark_color = "#0A0A0A"
+
 [tool.flet.app]
 path = "src"
 

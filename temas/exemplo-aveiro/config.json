@@ -12,7 +12,7 @@
     "feira": "Feiras",
     "outro": "Outros"
   },
-  "cor_primaria": "#0D47A1",
+  "cor_primaria": "#5FA8F5",
   "cores_categorias": {
     "musica": "#7B1FA2",
     "teatro": "#C62828",
@@ -24,5 +24,14 @@
   },
   "logotipo": "logo.png",
   "contacto": "",
-  "texto_sobre": "Tema de teste: prova que a app muda de cidade só com configuração."
+  "texto_sobre": "Tema de teste: prova que a app muda de cidade só com configuração.",
+  "cor_fundo": "#0A0A0A",
+  "cor_superficie": "#161618",
+  "cor_superficie_2": "#1F1F22",
+  "cor_texto": "#F5F5F7",
+  "cor_texto_2": "#8E8E93",
+  "fonte_texto": "Inter",
+  "fonte_destaque": "InterSemi",
+  "fonte_titulos": "InterDisplay",
+  "cor_destaque": "#5FA8F5"
 }
