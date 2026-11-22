@@ -1,0 +1,6 @@
+Nome,Data início,Hora,Data fim,Hora fim,Local,Morada,Categoria,Preço,Descrição,Link,Imagem
+Concerto de Natal na Sé,{hoje+5},21:30:00,,,Sé Velha,Largo da Sé Velha,Música,'10 €,Concerto de Natal com coro e órgão.,https://example.org/natal,
+Mercado de Natal,{hoje+2},10h,{hoje+9},20h,Praça 8 de Maio,,Feira,Gratuito,,,
+,,,,,,,,,,,
+Sem local,{hoje+3},18:00,,,,,Teatro,,,,
+Data estragada,amanhã,18:00,,,Sala X,,Teatro,,,,
