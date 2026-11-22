@@ -33,8 +33,8 @@ jobs:
           --app-name "Eventos Coimbra"
           --app-short-name "Eventos"
           --app-description "Agenda de eventos de Coimbra"
-          --pwa-theme-color "#8E1B3A"
-          --pwa-background-color "#FFFFFF"
+          --pwa-theme-color "#0A0A0A"
+          --pwa-background-color "#0A0A0A"
           --base-url eventos-coimbra
       - name: Confirmar que o site foi gerado
         run: ls -la dist && test -f dist/index.html
