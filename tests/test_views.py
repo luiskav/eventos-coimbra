@@ -168,3 +168,43 @@ def test_tema_escuro_e_letras(config):
 
     pasta = Path(__file__).resolve().parent.parent / "src" / "assets"
     assert all((pasta / ficheiro).exists() for ficheiro in theme.FONTES.values())
+
+
+# ---------- versão beta ----------
+def test_pesquisa_com_cantos_arredondados(config):
+    app, _ = criar_app(config, [])
+    caixa = app.ecra_agenda.caixa_pesquisa
+    assert caixa.border_radius == 16 and caixa.content is app.ecra_agenda.pesquisa
+    assert app.ecra_agenda.pesquisa.filled is False
+
+
+def test_escolher_datas_no_calendario(config, eventos):
+    from datetime import date
+
+    app, _ = criar_app(config, eventos)
+    ecra = app.ecra_agenda
+    assert "Datas" in textos(ecra.lista)
+    dia = eventos[0].inicio.date()
+    ecra.escolher_datas(dia, dia)
+    t = textos(ecra.lista)
+    assert ecra.periodo == "datas" and f"{dia.day}/{dia.month}" in t
+    assert eventos[0].titulo in t
+    assert all(e.inicio.date() == dia for e in ecra.eventos_visiveis())
+    ecra.escolher_datas(date(2027, 1, 10), date(2027, 1, 5))  # fim antes do início
+    assert ecra.datas == (date(2027, 1, 10), date(2027, 1, 10))
+
+
+def test_sobre_partilha_e_paginas_legais(config):
+    from dataclasses import replace
+
+    from views import ecra_sobre
+
+    cfg = replace(config, url_site="https://exemplo.pt/app/", frases_sobre=["Frase A"],
+                  contacto="ola@exemplo.pt", versao="0.9.0 beta")
+    app, _ = criar_app(cfg, [])
+    vista = ecra_sobre.construir(app)
+    t = textos(vista)
+    assert {"Partilhar a app", "Frase A", "Política de privacidade",
+            "Termos de utilização", "Sugerir um evento"} <= set(t)
+    assert any("Versão 0.9.0 beta" in x for x in t)
+    assert cfg.url_pagina("termos") == "https://exemplo.pt/app/termos.html"

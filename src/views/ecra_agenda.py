@@ -7,6 +7,8 @@ O cabeçalho (título grande, pesquisa e filtros) é o primeiro elemento da list
 por isso desliza com os eventos, como nas apps da Apple.
 """
 
+from datetime import date, datetime, timedelta
+
 import flet as ft
 
 import agenda
@@ -32,26 +34,45 @@ class EcraAgenda:
 
         self.titulo = theme.titulo(cfg, "", 32)
         self.subtitulo = theme.secundario(cfg, "", 14)
-        # FASE 4: pesquisa por texto
+        # FASE 4: pesquisa por texto. O fundo e os cantos arredondados vêm do Container:
+        # um TextField "filled" sem borda desenha o fundo com cantos retos.
         self.pesquisa = ft.TextField(
             hint_text="Pesquisar evento ou local",
             prefix_icon=ft.Icons.SEARCH,
             dense=True,
-            filled=True,
-            fill_color=cfg.cor_superficie_2,
+            filled=False,
             border=ft.NoInputBorder(),
-            border_radius=14,
             color=cfg.cor_texto,
             cursor_color=cfg.cor_destaque,
             hint_style=ft.TextStyle(color=cfg.cor_texto_2),
             on_change=self._ao_pesquisar,
+        )
+        self.caixa_pesquisa = ft.Container(
+            content=self.pesquisa,
+            bgcolor=cfg.cor_superficie_2,
+            border_radius=16,
+            clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+            padding=ft.Padding.symmetric(horizontal=4, vertical=2),
+        )
+        # Escolha de datas no calendário (período "datas")
+        self.datas: tuple | None = None  # (data de início, data de fim), ambas incluídas
+        hoje = app.agora().date()
+        self.calendario = ft.DateRangePicker(
+            first_date=datetime(hoje.year, hoje.month, hoje.day),
+            last_date=datetime(hoje.year + 1, hoje.month, hoje.day),
+            help_text="Escolhe as datas",
+            save_text="Ver eventos",
+            cancel_text="Cancelar",
+            field_start_label_text="Início",
+            field_end_label_text="Fim",
+            on_change=self._ao_escolher_datas,
         )
         self.linha_periodos = ft.Row(scroll=ft.ScrollMode.HIDDEN, spacing=8)
         self.linha_categorias = ft.Row(scroll=ft.ScrollMode.HIDDEN, spacing=8)
         self.aviso = ft.Container(visible=False)
         self.cabecalho = ft.Container(
             content=ft.Column(
-                [self.subtitulo, self.titulo, self.pesquisa, self.linha_periodos,
+                [self.subtitulo, self.titulo, self.caixa_pesquisa, self.linha_periodos,
                  self.linha_categorias, self.aviso],
                 spacing=12,
             ),
@@ -72,6 +93,29 @@ class EcraAgenda:
         self.limite = POR_PAGINA
         self.atualizar(redesenhar=True)
 
+    def _abrir_calendario(self, e=None):
+        self.app.page.show_dialog(self.calendario)
+
+    def _ao_escolher_datas(self, e):
+        inicio, fim = self.calendario.start_value, self.calendario.end_value
+        if not inicio:
+            return
+        self.escolher_datas(_dia(inicio), _dia(fim or inicio))
+
+    def escolher_datas(self, inicio: date, fim: date):
+        self.datas = (inicio, max(inicio, fim))
+        self.periodo = "datas"
+        self.limite = POR_PAGINA
+        self.atualizar(redesenhar=True)
+
+    def intervalo(self) -> tuple[datetime, datetime]:
+        """(início, fim exclusivo) em hora local do período escolhido."""
+        if self.periodo == "datas" and self.datas:
+            inicio, fim = self.datas
+            return (datetime(inicio.year, inicio.month, inicio.day),
+                    datetime(fim.year, fim.month, fim.day) + timedelta(days=1))
+        return agenda.intervalo(self.periodo, self.app.agora())
+
     def _escolher_categoria(self, categoria: str | None):
         self.categoria = None if categoria == self.categoria else categoria
         self.limite = POR_PAGINA
@@ -85,7 +129,7 @@ class EcraAgenda:
     def eventos_visiveis(self):
         return agenda.filtrar(
             self.app.eventos,
-            periodo=self.periodo,
+            entre=self.intervalo(),
             categoria=self.categoria,
             texto=self.texto,
             agora=self.app.agora(),
@@ -94,13 +138,21 @@ class EcraAgenda:
     def _desenhar_cabecalho(self):
         cfg = self.app.config
         agora = self.app.agora()
-        self.titulo.value = TITULOS[self.periodo].format(cidade=cfg.cidade)
+        if self.periodo == "datas" and self.datas:
+            self.titulo.value = agenda.formatar_intervalo(*self.datas)
+        else:
+            self.titulo.value = TITULOS[self.periodo].format(cidade=cfg.cidade)
         self.subtitulo.value = (f"{agenda.DIAS[agora.weekday()].capitalize()}, "
                                 f"{agora.day} de {agenda.MESES[agora.month - 1]}")
         self.linha_periodos.controls = [
             theme.pilula(cfg, rotulo, codigo == self.periodo,
                          on_click=lambda e, c=codigo: self._escolher_periodo(c))
             for codigo, rotulo in agenda.PERIODOS.items()
+        ] + [
+            theme.pilula(cfg, agenda.formatar_intervalo(*self.datas, curto=True)
+                         if self.periodo == "datas" and self.datas else "Datas",
+                         self.periodo == "datas", icone=ft.Icons.CALENDAR_MONTH,
+                         on_click=self._abrir_calendario)
         ]
         self.linha_categorias.controls = [
             theme.pilula(cfg, rotulo, codigo == self.categoria,
@@ -128,7 +180,7 @@ class EcraAgenda:
         else:
             hoje = self.app.agora().date()
             visiveis = self.eventos_visiveis()
-            desde = agenda.intervalo(self.periodo, self.app.agora())[0].date()
+            desde = self.intervalo()[0].date()
             for dia, eventos in agenda.agrupar_por_dia(visiveis[: self.limite], desde):
                 controlos.append(cabecalho_dia(self.app, dia, hoje))
                 controlos.extend(cartao_evento(self.app, ev, hoje) for ev in eventos)
@@ -145,3 +197,8 @@ class EcraAgenda:
 
         if redesenhar:
             self.app.redesenhar()
+
+
+def _dia(valor) -> date:
+    """O calendário devolve datetime (às vezes com fuso); só interessa o dia."""
+    return valor.date() if isinstance(valor, datetime) else valor

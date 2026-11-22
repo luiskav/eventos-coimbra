@@ -50,3 +50,26 @@ def test_splash_main(tmp_path, capsys):
     destino.write_text(FIXTURE.read_text(encoding="utf-8"), encoding="utf-8")
     assert splash.main([str(destino)]) == 0
     assert "ec-splash" in destino.read_text(encoding="utf-8")
+
+
+def test_paginas_legais(tmp_path):
+    import sys
+
+    sys.path.insert(0, str(splash.RAIZ / "scripts"))
+    import paginas_legais
+
+    cfg = {"nome": "Eventos Teste", "cidade": "Coimbra", "contacto": "ola@exemplo.pt",
+           "responsavel": "Empresa X", "data_textos_legais": "2026-11-22"}
+    feitos = paginas_legais.gerar(tmp_path, cfg)
+    assert [f.name for f in feitos] == ["privacidade.html", "termos.html"]
+    privacidade = feitos[0].read_text(encoding="utf-8")
+    assert "<h1>Política de privacidade</h1>" in privacidade and "Empresa X" in privacidade
+    assert 'href="mailto:ola@exemplo.pt"' in privacidade and "{" not in privacidade.split(
+        "</style>")[1]
+    assert "<ul><li>" in privacidade
+    # o splash.py também gera as páginas, ao lado do index.html
+    destino = tmp_path / "site"
+    destino.mkdir()
+    (destino / "index.html").write_text(FIXTURE.read_text(encoding="utf-8"), encoding="utf-8")
+    splash.main([str(destino / "index.html")])
+    assert (destino / "termos.html").exists()

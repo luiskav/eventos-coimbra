@@ -1,26 +1,43 @@
-# Política de privacidade — Eventos Coimbra
+# Política de privacidade
 
-*Rascunho para rever antes de publicar (Fase 6, tarefa 6.6). Não substitui aconselhamento jurídico.*
+**{nome}** · versão de {data}
 
-**Responsável:** A Minha Empresa (TROCAR), contacto: geral@aminhaempresa.pt (TROCAR).
+## Quem somos
 
-**Que dados recolhemos?** Nenhum dado pessoal. A app não tem contas, não pede nome, email
-nem localização.
+O {nome} é uma agenda gratuita de eventos de {cidade}, disponível como site e como app
+Android. É mantida por **{responsavel}**. Contacto: {contacto}.
 
-**Favoritos:** ficam guardados apenas no teu dispositivo e nunca são enviados para nós.
-Apagam-se se desinstalares a app ou limpares os dados do browser.
+## Que dados pessoais recolhemos
 
-**Serviços externos:**
-- Os eventos são lidos de uma base de dados alojada no Supabase (servidores na UE).
-- Os botões "Mapa", "Calendário", "Ver na fonte" e "Partilhar" abrem serviços de terceiros
-  (Google Maps, Google Calendar, o site da sala, as tuas apps de mensagens), que têm as
-  suas próprias políticas.
-- O alojamento do site (GitHub Pages) pode registar endereços IP por razões de segurança.
+**Nenhum.** O {nome} não tem contas nem registo e não te pede nome, email, telefone ou
+localização. Não usamos publicidade, cookies de rastreio nem ferramentas de análise
+de utilização.
 
-**Origem da informação:** os eventos são recolhidos automaticamente dos sites públicos das
-salas e entidades, com um resumo próprio e link para a fonte. Se és responsável por um
-desses sites e queres que deixemos de o usar, escreve-nos.
+## O que fica guardado no teu dispositivo
 
-**Alterações:** esta política pode mudar; a data da última versão fica no fim da página.
+- **Favoritos:** os eventos que marcas com o coração ficam guardados apenas no teu
+  telemóvel ou browser. Nunca são enviados para nós.
+- **Cópia da agenda:** a app guarda a última lista de eventos para abrir mais depressa.
 
-Última atualização: AAAA-MM-DD
+Tudo isto desaparece se desinstalares a app ou limpares os dados do browser.
+
+## Serviços de terceiros
+
+- **Supabase** (base de dados dos eventos, servidores na União Europeia): a app só lê a
+  lista pública de eventos.
+- **GitHub Pages** (alojamento do site) e **Google Play** (distribuição da app) podem
+  registar dados técnicos, como o endereço IP, por razões de segurança e funcionamento,
+  segundo as suas próprias políticas.
+- Os botões **Ver na fonte**, **Mapa**, **Calendário** e **Partilhar** abrem serviços
+  externos (o site da sala, Google Maps, Google Calendar, as tuas apps de mensagens),
+  que têm as suas próprias políticas de privacidade.
+
+## Os teus direitos
+
+Como não guardamos dados pessoais, não há dados teus para consultar, corrigir ou apagar.
+Se tiveres alguma dúvida, escreve para {contacto}. Podes também apresentar reclamação à
+Comissão Nacional de Proteção de Dados (www.cnpd.pt).
+
+## Alterações
+
+Se esta política mudar, a nova versão é publicada nesta página, com a data no topo.

@@ -34,6 +34,10 @@ PADRAO: dict = {
     "fonte_texto": "Inter",
     "fonte_destaque": "InterSemi",
     "fonte_titulos": "InterDisplay",
+    # Versão beta: página Sobre, partilha da app e páginas legais
+    "versao": "",
+    "url_site": "",
+    "frases_sobre": [],
 }
 
 
@@ -58,12 +62,19 @@ class Config:
     fonte_texto: str = "Inter"
     fonte_destaque: str = "InterSemi"
     fonte_titulos: str = "InterDisplay"
+    versao: str = ""
+    url_site: str = ""  # endereço público do site; as páginas legais ficam aqui
+    frases_sobre: list[str] = field(default_factory=list)
     supabase_url: str = ""
     supabase_anon_key: str = ""
 
     @property
     def tem_supabase(self) -> bool:
         return bool(self.supabase_url and self.supabase_anon_key)
+
+    def url_pagina(self, nome: str) -> str:
+        """Ex.: url_pagina('privacidade') -> https://.../privacidade.html"""
+        return f"{self.url_site.rstrip('/')}/{nome}.html" if self.url_site else ""
 
     def rotulo_categoria(self, codigo: str) -> str:
         return self.categorias.get(codigo, codigo.capitalize())
