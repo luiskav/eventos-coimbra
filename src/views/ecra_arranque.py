@@ -2,7 +2,7 @@
 
 Mostrado logo que a app abre, enquanto os eventos são lidos. Usa o mesmo desenho
 do ecrã de carregamento da página HTML (scripts/splash.py): logótipo ao centro,
-anel dourado a rodar e a frase "A preparar a agenda…". Assim, a passagem da
+anel amarelo a rodar e a frase "A preparar a agenda…". Assim, a passagem da
 página para a app não se nota.
 """
 
@@ -17,12 +17,7 @@ def construir(config) -> ft.View:
         color=config.cor_destaque, bgcolor=config.cor_superficie_2,
         stroke_cap=ft.StrokeCap.ROUND,
     )
-    monograma = ft.Container(
-        content=ft.Text("EC", size=26, font_family=config.fonte_titulos,
-                        color=config.cor_texto),
-        width=60, height=60, bgcolor=config.cor_superficie, border_radius=16,
-        alignment=ft.Alignment.CENTER,
-    )
+    monograma = ft.Image(src="marca.png", width=64)  # logótipo "m." da My Own City
     return ft.View(
         route="/arranque",
         bgcolor=config.cor_fundo,

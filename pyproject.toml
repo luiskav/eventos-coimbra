@@ -11,10 +11,10 @@ dependencies = [
 
 # FASE 7: dados da app Android (nome, identificador, ícone)
 [tool.flet]
-org = "pt.luiskav"          # TROCAR pelo domínio da empresa, ao contrário
-product = "Eventos Coimbra"
-company = "luiskav"       # TROCAR
-copyright = "Copyright (C) 2026 luiskav"
+org = "net.myowncity"       # domínio da app, ao contrário
+product = "My Own City"
+company = "Sampaio Cavaleiro Lda"
+copyright = "Copyright (C) 2026 Sampaio Cavaleiro Lda"
 
 # Bloco G: ecrã de arranque do Android em preto, como o resto da app
 [tool.flet.splash]
@@ -25,7 +25,7 @@ dark_color = "#0A0A0A"
 path = "src"
 
 [tool.flet.android]
-# o identificador final fica org + nome do projeto: pt.aminhaempresa.eventos_coimbra
+# o identificador final fica org + nome do projeto (fecha-se no passo da Google Play)
 
 [tool.flet.android.permission]
 "android.permission.INTERNET" = true

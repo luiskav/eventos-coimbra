@@ -83,7 +83,7 @@ fontes:
     nome: Introdução manual
     tipo: folha
     url: https://docs.google.com/spreadsheets/d/19jRPJjfjkHduoVCPQP4XPBnvuv-S3db8GUsUM8Q_Dto/edit#gid=0
-    link_padrao: https://luiskav.github.io/eventos-coimbra/
+    link_padrao: https://myowncity.net/
     categoria: outro
     ativa: true
 
@@ -94,6 +94,6 @@ fontes:
     nome: Tarefa Claude (Eventos Coimbra)
     tipo: folha
     url: https://docs.google.com/spreadsheets/d/1ucBVK7mQd9A1wc9C-e_Il1FmILY53lvqRdebtbL-W_U/edit#gid=0
-    link_padrao: https://luiskav.github.io/eventos-coimbra/
+    link_padrao: https://myowncity.net/
     categoria: outro
     ativa: true
