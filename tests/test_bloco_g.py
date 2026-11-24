@@ -73,3 +73,8 @@ def test_paginas_legais(tmp_path):
     (destino / "index.html").write_text(FIXTURE.read_text(encoding="utf-8"), encoding="utf-8")
     splash.main([str(destino / "index.html")])
     assert (destino / "termos.html").exists()
+
+
+def test_cname_do_dominio_proprio(tmp_path):
+    destino = splash.escrever_cname(tmp_path)
+    assert destino is not None and destino.read_text(encoding="utf-8").strip() == "myowncity.net"

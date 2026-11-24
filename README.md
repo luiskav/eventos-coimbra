@@ -1,4 +1,4 @@
-# Eventos Coimbra
+# My Own City (Eventos Coimbra)
 
 Agenda de eventos e acontecimentos de Coimbra: **site + app Android** feitos só em Python
 (Flet), com os dados num Supabase alimentado por um **scraper com Claude** que corre todos

@@ -14,6 +14,7 @@ Se o index.html não tiver o formato esperado, não altera nada e avisa (código
 para nunca impedir a publicação do site.
 """
 
+import base64
 import json
 import sys
 from pathlib import Path
@@ -31,7 +32,7 @@ def _cores() -> dict:
         "superficie_2": cfg.get("cor_superficie_2", "#1F1F22"),
         "texto": cfg.get("cor_texto", "#F5F5F7"),
         "texto_2": cfg.get("cor_texto_2", "#8E8E93"),
-        "destaque": cfg.get("cor_destaque", "#C9A55C"),
+        "destaque": cfg.get("cor_destaque", "#F9C441"),
         "nome": cfg.get("nome", "Eventos"),
     }
 
@@ -54,15 +55,22 @@ def estilo(c: dict) -> str:
   @keyframes ec-roda {{ to {{ transform: rotate(360deg); }} }}
   @keyframes ec-pulsa {{ 0%, 100% {{ opacity: .55; }} 50% {{ opacity: 1; }} }}
   @keyframes ec-ponto {{ 0%, 80%, 100% {{ opacity: .2; }} 40% {{ opacity: 1; }} }}
+  @keyframes ec-salta {{ 0%, 100% {{ transform: translateY(0); }}
+    45% {{ transform: translateY(-7px); }} 60% {{ transform: translateY(0); }}
+    70% {{ transform: translateY(-2px); }} }}
   #ec-splash .ec-anel {{ transform-origin: 60px 60px; animation: ec-roda 1.1s linear infinite; }}
-  #ec-splash .ec-mono {{ animation: ec-pulsa 2.2s ease-in-out infinite; }}
+  #ec-splash .ec-ponto {{ animation: ec-salta 1.1s ease-in-out infinite; }}
   #ec-splash .ec-p {{ animation: ec-ponto 1.4s infinite; }}
   #ec-splash .ec-p:nth-child(2) {{ animation-delay: .2s; }}
   #ec-splash .ec-p:nth-child(3) {{ animation-delay: .4s; }}
   @media (prefers-reduced-motion: reduce) {{
-    #ec-splash .ec-anel, #ec-splash .ec-mono, #ec-splash .ec-p {{ animation: none; }}
+    #ec-splash .ec-anel, #ec-splash .ec-ponto, #ec-splash .ec-p {{ animation: none; }}
   }}
 </style>"""
+
+
+# Logótipo "m" (sem o ponto, que é desenhado à parte para saltitar), embutido em base64
+MARCA = base64.b64encode((Path(__file__).parent / "marca_splash.png").read_bytes()).decode()
 
 
 def ecra(c: dict) -> str:
@@ -72,11 +80,9 @@ def ecra(c: dict) -> str:
     <circle class="ec-anel" cx="60" cy="60" r="52" fill="none" stroke="{c['destaque']}"
       stroke-width="4" stroke-linecap="round" stroke-dasharray="80 247"/>
     <g class="ec-mono">
-      <rect x="30" y="30" width="60" height="60" rx="16" fill="{c['superficie']}"/>
-      <text x="60" y="69" text-anchor="middle" font-size="26" font-weight="700"
-        fill="{c['texto']}" font-family="-apple-system, Inter, sans-serif"
-        letter-spacing="-1">EC</text>
+      <image href="data:image/png;base64,{MARCA}" x="28" y="42.5" width="64" height="35"/>
     </g>
+    <circle class="ec-ponto" cx="85.9" cy="71.4" r="6.1" fill="{c['destaque']}"/>
   </svg>
   <div>
     <div class="ec-nome">{c['nome']}</div>
@@ -148,7 +154,23 @@ def main(argv: list[str]) -> int:
 
     for f in gerar(caminho.parent):
         print(f"gerada: {f}")
+    cname = escrever_cname(caminho.parent)
+    if cname:
+        print(f"gerado: {cname}")
     return 0
+
+
+def escrever_cname(pasta: Path) -> Path | None:
+    """Domínio próprio (ex.: myowncity.net) a partir do url_site do config.json."""
+    from urllib.parse import urlparse
+
+    cfg = json.loads((RAIZ / "src" / "conf" / "config.json").read_text(encoding="utf-8"))
+    dominio = urlparse(cfg.get("url_site", "")).hostname or ""
+    if not dominio or dominio.endswith("github.io"):
+        return None
+    destino = pasta / "CNAME"
+    destino.write_text(dominio + "\n", encoding="utf-8")
+    return destino
 
 
 if __name__ == "__main__":
