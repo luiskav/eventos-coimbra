@@ -30,12 +30,11 @@ jobs:
           flet publish src/main.py
           --assets src/assets
           --distpath "${{ github.workspace }}/dist"
-          --app-name "Eventos Coimbra"
-          --app-short-name "Eventos"
-          --app-description "Agenda de eventos de Coimbra"
+          --app-name "My Own City"
+          --app-short-name "My Own City"
+          --app-description "Tudo o que acontece em Coimbra, num só sítio"
           --pwa-theme-color "#0A0A0A"
           --pwa-background-color "#0A0A0A"
-          --base-url eventos-coimbra
       - name: Ecrã de carregamento animado (bloco G)
         run: python scripts/splash.py dist/index.html
       - name: Confirmar que o site foi gerado
