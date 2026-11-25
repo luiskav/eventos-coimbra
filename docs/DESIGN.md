@@ -54,4 +54,5 @@ Os ficheiros estão reduzidos ao alfabeto português (cerca de 56 KB cada). Lice
 - `src/assets/icon.png` (1024 px): ícone da app Android e do site, "m." sobre preto.
 - `src/assets/logo.png` (512 px, cantos arredondados): página Sobre e temas.
 - `src/assets/marca.png`: só o "m." sobre transparente (ecrã de arranque).
-- `src/assets/favicon.png` (64 px): separador do browser.
+- `src/assets/favicon.png` (64 px): separador do browser — só o ponto amarelo.
+- `src/assets/icons/` : ícones do site instalado no telemóvel (PWA), com o "m." sobre preto.
