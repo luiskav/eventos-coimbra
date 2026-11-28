@@ -33,6 +33,14 @@ FERRAMENTA = {
                         "local": {"type": "string",
                                   "description": "Sala ou espaço onde acontece"},
                         "categoria": {"type": "string", "enum": CATEGORIAS},
+                        "modalidade": {
+                            "type": ["string", "null"],
+                            "description": "Só para desporto: a modalidade (ex.: Futebol, "
+                                           "Basquetebol, Andebol, Voleibol, Atletismo). "
+                                           "Procura também nos nomes das equipas (ex.: "
+                                           "'Sampaense Basket') e na competição; null se "
+                                           "não houver pistas",
+                        },
                         "preco": {"type": ["string", "null"],
                                   "description": "Como aparece na página (ex.: '10 €', "
                                                  "'Gratuito'); null se não aparecer"},
@@ -63,6 +71,7 @@ Regras:
 - Se o ano não aparecer, usa o ano mais próximo no futuro.
 - Se um evento tiver várias sessões em dias diferentes, cria um evento por sessão.
 - Se só houver data sem hora, usa 00:00.
+- Em eventos de desporto, preenche sempre "modalidade" quando houver pistas.
 - Os links aparecem no texto como [link: URL] e as imagens como [imagem: URL].
 
 Texto da página:

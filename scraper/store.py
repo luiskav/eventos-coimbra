@@ -9,7 +9,7 @@ from datetime import UTC, datetime, timedelta
 
 import httpx
 
-from scraper import repetidos
+from scraper import modalidades, repetidos
 from scraper.models import EventoExtraido
 from scraper.normalize import chave_evento
 
@@ -65,8 +65,10 @@ class Armazem:
     @staticmethod
     def para_linha(ev: EventoExtraido, source_id: int) -> dict:
         return {
+            # a chave usa o título sem a modalidade: assim, juntar a modalidade a um
+            # evento que já existia atualiza-o em vez de criar outro
             "chave": chave_evento(ev.titulo, ev.inicio, ev.local),
-            "titulo": ev.titulo,
+            "titulo": modalidades.com_modalidade(ev.titulo, ev.modalidade),
             "inicio": ev.inicio.isoformat(),
             "fim": ev.fim.isoformat() if ev.fim else None,
             "local": ev.local,
