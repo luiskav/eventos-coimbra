@@ -11,7 +11,8 @@ Regras (todas têm de se cumprir):
   2. Datas compatíveis:
      - eventos de um dia: mesmo dia (hora de Lisboa) e início a menos de 60 minutos,
        ou um deles sem hora (00:00);
-     - eventos longos (mais de um dia, ou permanentes): os períodos sobrepõem-se.
+     - eventos longos (mais de um dia, ou permanentes): os períodos sobrepõem-se e
+       os locais são o mesmo (ex.: o mesmo filme no Fórum e no Alma são dois cartões).
 """
 
 from datetime import datetime, timedelta
@@ -25,6 +26,22 @@ TOLERANCIA = timedelta(minutes=60)
 # Palavras que aparecem em muitos títulos e não ajudam a distinguir
 _GENERICAS = _PALAVRAS_VAZIAS | {"um", "uma", "com", "para", "por", "sobre", "exposicao",
                                  "concerto", "teatro", "coimbra"}
+
+
+# Palavras de locais que não distinguem uma sala de outra
+_GENERICAS_LOCAL = _GENERICAS | {"cinemas", "cinema", "nos", "sala", "salas", "auditorio",
+                                 "centro", "comercial", "shopping", "loja"}
+
+
+def mesmo_local(a: str | None, b: str | None) -> bool:
+    """Sem um dos locais, não se pode dizer que são diferentes."""
+    if not a or not b:
+        return True
+    pa = {p for p in normalizar(a).split() if len(p) > 1 and p not in _GENERICAS_LOCAL}
+    pb = {p for p in normalizar(b).split() if len(p) > 1 and p not in _GENERICAS_LOCAL}
+    if not pa or not pb:
+        return True
+    return len(pa & pb) / min(len(pa), len(pb)) >= 0.5
 
 
 def palavras(titulo: str) -> set[str]:
@@ -57,6 +74,8 @@ def provavel_repetido(a: dict, b: dict) -> bool:
     pa, pb = bool(a.get("permanente")), bool(b.get("permanente"))
 
     if _longo(ia, fa, pa) and _longo(ib, fb, pb):
+        if not mesmo_local(a.get("local"), b.get("local")):
+            return False
         fim_a = None if pa else (fa or ia)
         fim_b = None if pb else (fb or ib)
         return (fim_b is None or ia <= fim_b) and (fim_a is None or ib <= fim_a)

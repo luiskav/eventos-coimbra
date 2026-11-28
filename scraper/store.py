@@ -13,7 +13,7 @@ from scraper import repetidos
 from scraper.models import EventoExtraido
 from scraper.normalize import chave_evento
 
-CAMPOS_EXISTENTES = "id,chave,titulo,inicio,fim,categoria,preco,descricao,imagem,permanente"
+CAMPOS_EXISTENTES = "id,chave,titulo,inicio,fim,local,categoria,preco,descricao,imagem,permanente"
 
 
 class ErroArmazem(Exception):
