@@ -44,27 +44,28 @@ fontes:
     seletor: ""
     ativa: false
 
-  # Ativar depois de as cinco primeiras estarem estáveis.
+  # Ativadas em 27/11/2026: as primeiras fontes estão estáveis e os repetidos
+  # entre fontes já são detetados (scraper/repetidos.py).
   - id: fbb
     nome: Fundação Bissaya Barreto (Casa das Artes)
     url: https://agenda.fbb.pt/eventos/
     categoria: exposicao
     seletor: ""
-    ativa: false
+    ativa: true
 
   - id: capc
     nome: Círculo de Artes Plásticas de Coimbra
     url: https://capcoimbra.org/
     categoria: exposicao
     seletor: ""
-    ativa: false
+    ativa: true
 
   - id: marionet
     nome: Marionet
     url: https://marioneteatro.com/activities
     categoria: teatro
     seletor: ""
-    ativa: false
+    ativa: true
 
   # Agregador: só mostra 1 a 2 dias e repete eventos das fontes acima.
   # Usar só se faltar alguma sala; confirmar primeiro os termos do site.
@@ -74,6 +75,38 @@ fontes:
     categoria: outro
     seletor: ""
     ativa: false
+
+  # --- Novas fontes (27/11/2026) -------------------------------------------
+  # Fnac, Worten, Ticketline, BOL, Blueticket, Fever e Bandsintown não têm uma
+  # página de Coimbra que se leia sem JavaScript (ou só revendem bilhetes de
+  # outras bilheteiras): ficam a cargo da tarefa agendada do Claude, que as
+  # pesquisa todos os dias (fonte "tarefa-claude").
+
+  # Concertos em Coimbra (inclui Sala 8, Lit, NB Club, Fnac, Rugby Lounge...).
+  # A página também mostra cidades próximas: o Claude só guarda as de Coimbra.
+  - id: songkick
+    nome: Songkick (concertos em Coimbra)
+    url: https://www.songkick.com/pt/metro-areas/31799-portugal-coimbra
+    categoria: musica
+    seletor: ""
+    ativa: true
+
+  # Teatro da Cerca de São Bernardo / A Escola da Noite: o site próprio não
+  # tem agenda fácil de ler; a página da sala no Viral Agenda tem a programação.
+  - id: tcsb
+    nome: Teatro da Cerca de São Bernardo (via Viral Agenda)
+    url: https://www.viralagenda.com/pt/p/TCSBernardo
+    categoria: teatro
+    seletor: ""
+    ativa: true
+
+  # Fnac Fórum Coimbra: concertos, comedy nights, apresentações de livros.
+  - id: fnac-coimbra
+    nome: Fnac Fórum Coimbra (via Viral Agenda)
+    url: https://www.viralagenda.com/pt/p/304632222938971
+    categoria: musica
+    seletor: ""
+    ativa: true
 
   # Introdução manual: uma Google Sheet onde se escrevem eventos à mão.
   # Sem Claude e sem custo. Ver docs/MANUAL.md.

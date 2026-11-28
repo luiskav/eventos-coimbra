@@ -57,6 +57,8 @@ A categoria mais provável desta fonte é "{categoria}".
 
 Regras:
 - Extrai só eventos com data a partir de hoje.
+- Extrai só eventos que se realizam no concelho de {cidade}. As agendas de concertos e
+  os agregadores também mostram outras cidades (ex.: Ílhavo, Castelo Branco): ignora-os.
 - Não inventes dados: se um campo não aparecer na página, usa null.
 - Se o ano não aparecer, usa o ano mais próximo no futuro.
 - Se um evento tiver várias sessões em dias diferentes, cria um evento por sessão.
