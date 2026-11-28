@@ -122,3 +122,19 @@ def test_app_permanente_e_agrupamento():
     grupos = agenda.agrupar_por_dia([concerto, expo], hoje)
     assert [d for d, _ in grupos] == [hoje, hoje + timedelta(days=1)]
     assert Evento.de_dict({**expo.para_dict(), "id": 1}).permanente
+
+
+def test_mesmo_filme_em_cinemas_diferentes_nao_e_repetido():
+    p = repetidos.provavel_repetido
+    forum = {"titulo": "Michael — Cinemas NOS Fórum Coimbra", "inicio": "2026-11-26T13:45:00+00:00",
+             "fim": "2026-12-02T23:59:00+00:00", "local": "Cinemas NOS Fórum Coimbra"}
+    alma = {"titulo": "Michael — Cinemas NOS Alma Shopping", "inicio": "2026-11-26T13:20:00+00:00",
+            "fim": "2026-12-02T23:59:00+00:00", "local": "Cinemas NOS Alma Shopping"}
+    assert not p(forum, alma)
+    assert p(forum, {**forum, "titulo": "Michael - Cinemas NOS Forum Coimbra"})
+    # exposição: o mesmo museu escrito de outra forma continua a ser repetido
+    assert p({"titulo": "Sob Mares Frágeis", "inicio": "2026-09-30T09:00:00+00:00",
+              "fim": "2027-03-31T22:59:00+00:00", "local": "UC Exploratório"},
+             {"titulo": "Exposição: Sob Mares Frágeis", "inicio": "2026-09-25T14:00:00+00:00",
+              "fim": "2027-03-31T17:00:00+00:00",
+              "local": "UC Exploratório - Rotunda das Lages, Coimbra"})
