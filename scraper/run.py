@@ -21,7 +21,7 @@ from pathlib import Path
 
 import yaml
 
-from scraper import extract, fetch, folha
+from scraper import extract, fetch, folha, modalidades
 from scraper.models import validar_eventos
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -70,7 +70,8 @@ def processar_fonte(fonte: dict, cidade: str, ensaio: bool, offline: bool,
         resultado = ler_fonte_folha(fonte, ensaio, cliente_http, agora.date())
         base_url = fonte.get("link_padrao") or ""
         registo["encontrados"] = len(resultado.eventos)
-        return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem)
+        return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem,
+                                 cliente_http)
 
     # 1. obter o HTML
     guardado = FIXTURES / f"{fonte['id']}.html"
@@ -94,7 +95,8 @@ def processar_fonte(fonte: dict, cidade: str, ensaio: bool, offline: bool,
     registo["encontrados"] = len(resultado.eventos)
     registo["tokens_entrada"] = resultado.tokens_entrada
     registo["tokens_saida"] = resultado.tokens_saida
-    return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem)
+    return _validar_e_gravar(resultado, registo, base_url, agora, ensaio, fonte, armazem,
+                             cliente_http)
 
 
 def ler_fonte_folha(fonte: dict, ensaio: bool, cliente_http,
@@ -127,19 +129,46 @@ def ler_fonte_folha(fonte: dict, ensaio: bool, cliente_http,
     return extract.Resultado(eventos=eventos)
 
 
+MAX_PAGINAS_DESPORTO = 15  # páginas de eventos abertas por fonte, no máximo
+
+
+def completar_modalidades(eventos, base_url: str, cliente_http) -> None:
+    """Garante a modalidade em todos os eventos de desporto (ver scraper/modalidades.py)."""
+    abertas = 0
+    for ev in eventos:
+        if ev.categoria != "desporto":
+            continue
+        ev.modalidade = (modalidades.oficial(ev.modalidade)
+                         or modalidades.detetar(f"{ev.titulo} {ev.descricao or ''}"))
+        if ev.modalidade or cliente_http is None or abertas >= MAX_PAGINAS_DESPORTO:
+            continue
+        if not ev.url or ev.url.rstrip("/") == base_url.rstrip("/"):
+            continue  # sem página própria do evento
+        abertas += 1
+        try:
+            html = fetch.obter_pagina(ev.url, cliente_http)
+            ev.modalidade = modalidades.detetar(fetch.limpar_html(html, ev.url))
+        except Exception as erro:  # a modalidade é uma ajuda, nunca um motivo para falhar
+            print(f"  modalidade — não consegui abrir {ev.url}: {erro}")
+        if not ev.modalidade:
+            print(f"  modalidade — desconhecida: {ev.titulo}")
+
+
 def _validar_e_gravar(resultado, registo: dict, base_url: str, agora: datetime, ensaio: bool,
-                      fonte: dict, armazem) -> dict:
+                      fonte: dict, armazem, cliente_http=None) -> dict:
     # 4. validar
     validos, rejeitados = validar_eventos(resultado.eventos, base_url, agora)
     registo["validos"] = len(validos)
+    completar_modalidades(validos, base_url, None if ensaio else cliente_http)
     for motivo in rejeitados:
         print(f"  rejeitado — {motivo}")
 
     # 5. gravar (ou só mostrar, em ensaio)
     if ensaio:
         for ev in validos:
+            titulo = modalidades.com_modalidade(ev.titulo, ev.modalidade)
             print(f"  {ev.inicio:%Y-%m-%d %H:%M} UTC | {ev.categoria:<9} | "
-                  f"{ev.titulo} @ {ev.local}")
+                  f"{titulo} @ {ev.local}")
     else:
         source_id = armazem.garantir_fonte(fonte)
         registo["source_id"] = source_id

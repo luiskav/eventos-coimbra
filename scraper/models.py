@@ -47,6 +47,7 @@ class EventoExtraido(BaseModel):
     url: str
     imagem: str | None = None
     permanente: bool = False  # sem data de fim (ex.: exposição permanente): na app, "fim: N/A"
+    modalidade: str | None = None  # só desporto: aparece antes do título na app
 
     @field_validator("titulo", "local", mode="before")
     @classmethod
